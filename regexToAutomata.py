@@ -29,7 +29,7 @@ def transform(expression, automata):
         last_state = left_state
         i = 0
         while i < len(expression):
-            print(str(i) + ' ' + str(expression[i]))
+            #print(str(i) + ' ' + str(expression[i]))
             a = None
             b = None
             if prefix:
@@ -66,7 +66,6 @@ def transform(expression, automata):
                             break
                     # find matching closing parentheses
                     temp_left, temp_right = transform(expression[i + 1: j], automata)
-                    print('Izasao')
                     a = temp_left
                     b = temp_right
                     i = j
