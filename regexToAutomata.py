@@ -85,4 +85,3 @@ def transform(expression, automata):
             i += 1
         automata.add_epsilon_transition(last_state, right_state)
     return left_state, right_state
-
