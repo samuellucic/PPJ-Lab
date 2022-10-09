@@ -63,7 +63,7 @@ def transform(expression, automata):
                             j = k
                             break
                     # find matching closing parentheses
-                    temp_left, temp_right = transform(expression[i + 1, j - 1], automata)
+                    temp_left, temp_right = transform(expression[i + 1: j], automata)
                     a = temp_left
                     b = temp_right
                     i = j

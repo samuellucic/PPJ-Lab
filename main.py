@@ -3,7 +3,7 @@ from regexToAutomata import transform
 
 if __name__ == '__main__':
     automat = Automata()
-    expression = 'abc'
+    expression = '(a)*'
     transform(expression, automat)
     print(automat.states)
     for key in automat.transitions:
