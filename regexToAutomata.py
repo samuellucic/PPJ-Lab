@@ -61,8 +61,13 @@ def transform(expression, automata):
                         automata.add_transition(a, b, expression[i])
                 else:
                     j = None
+                    brackets_cnt = 0
                     for k in range(i, len(expression)):
-                        if expression[k] == ')' and is_operator(expression, k):
+                        if expression[k] == '(' and is_operator(expression, k):
+                            brackets_cnt += 1
+                        elif expression[k] == ')' and is_operator(expression, k):
+                            brackets_cnt -= 1
+                        if brackets_cnt == 0:
                             j = k
                             break
                     # find matching closing parentheses
