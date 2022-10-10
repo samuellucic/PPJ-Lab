@@ -52,6 +52,12 @@ if __name__ == '__main__':
                 additional = input()
             special_actions.append(list)
 
+    f = open("prijelazi.txt", "w")
+
     for automat in automata:
         print(automat)
         print('====================')
+        f.write(automat.__str__())
+        f.write('====================\n')
+
+    f.close()
