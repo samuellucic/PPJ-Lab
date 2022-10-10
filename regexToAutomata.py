@@ -21,6 +21,7 @@ def transform(expression, automata):
 
     if len(options) >= 1:
         for i in range(len(options)):
+            #print(options[i])
             temp_left, temp_right = transform(options[i], automata)
             automata.add_epsilon_transition(left_state, temp_left)
             automata.add_epsilon_transition(temp_right, right_state)
@@ -42,14 +43,14 @@ def transform(expression, automata):
                 elif expression[i] == '_':
                     transitional_char == ' '
                 else:
-                    transitional_char == expression[i]
-
+                    transitional_char = expression[i]
                 a = automata.create_state()
                 b = automata.create_state()
                 automata.add_transition(a, b, transitional_char)
             else:
                 if expression[i] == '\\':
                     prefix = True
+                    i += 1
                     continue
                 if expression[i] != '(':
                     a = automata.create_state()
