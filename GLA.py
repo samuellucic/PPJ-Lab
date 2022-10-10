@@ -25,10 +25,6 @@ if __name__ == '__main__':
                 new_definition = regular_definitions[key].replace('{' + def_name + '}', '(' + regular_definitions[def_name] + ')')
                 regular_definitions.update({key: new_definition})
 
-    print(regular_definitions)
-    print(analizer_states)
-    print(char_categories)
-
     automata = []
     states = []
     special_actions = []
@@ -41,16 +37,17 @@ if __name__ == '__main__':
                 if regex.find('{' + def_name + '}') != -1:
                     regex = regex.replace('{' + def_name + '}', '(' + regular_definitions[def_name] + ')')
             new_automata = Automata()
-            print(regex)
             transform(regex, new_automata)
             automata.append(new_automata)
         elif line[0] == '{':
             new_state = input()
             additional = input()
             list = []
+            list.append(new_state)
             while additional != '}':
                 list.append(additional)
                 additional = input()
             special_actions.append(list)
 
     print(states)
+    print(special_actions)
