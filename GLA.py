@@ -49,5 +49,6 @@ if __name__ == '__main__':
                 additional = input()
             special_actions.append(list)
 
-    print(states)
-    print(special_actions)
+    for automat in automata:
+        print(automat)
+        print('====================')

@@ -7,6 +7,15 @@ class Automata:
         self.states = []
         self.transitions = {}
 
+    def __str__(self):
+        states = 'Stanja: \n'
+        for state in self.states:
+            states += (str(state) + ' ')
+        transitions = 'Prijelazi: \n'
+        for transition in self.transitions:
+            transitions += (str(transition) + ' sa znakom ' + repr(self.transitions[transition]) + '\n')
+        return states + '\n--------------------\n' + transitions
+
     def create_state(self):
         self.states.append(State().__str__())
         self.state_count += 1

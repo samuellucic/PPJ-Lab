@@ -41,7 +41,7 @@ def transform(expression, automata):
                 elif expression[i] == 'n':
                     transitional_char = '\n'
                 elif expression[i] == '_':
-                    transitional_char == ' '
+                    transitional_char = ' '
                 else:
                     transitional_char = expression[i]
                 a = automata.create_state()
