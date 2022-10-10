@@ -31,7 +31,10 @@ if __name__ == '__main__':
     for line in stdin:
         line = line.strip()
         if line[0] == '<':
-            state, regex = line.split('>')
+            char_index = line.find('>')
+            state = line[1:char_index]
+            regex = line[char_index+1: ]
+            #state, regex = line.split('>')
             states.append(state[1:])
             for def_name in regular_definitions:
                 if regex.find('{' + def_name + '}') != -1:
