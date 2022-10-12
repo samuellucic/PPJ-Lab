@@ -82,10 +82,7 @@ if __name__ == '__main__':
             )
 
         output["automatas"] = automatas
-        # output["special_actions"] = special_actions
-        # output["states"] = states
-        print(special_actions)
-        print(len(special_actions))
-        print(states)
-        print(len(states))
+        output["analizer_states"] = analizer_states
+        output["char_categories"] = char_categories
+        print(output)
         dump(output, f)

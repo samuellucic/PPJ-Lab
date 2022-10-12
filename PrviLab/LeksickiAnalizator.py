@@ -21,14 +21,15 @@ def epsilon_closure(automata: dict, stack: set) -> set:
 with open("prijelazi.json", "r") as file:
     input = loads(file.read())
 
-# special_actions = input["special_actions"]
-# states = input["states"]
 line = stdin.read()
-#negdje dodati da ako nije lex u pravom stanju da ne radi nista
-#dodati da za svaki automat pohrani sto je našao
-#pretraziti po onim pravilima i odraditi akciju
-#nakon tog čuda postaviti vrijednosti zavrsetak posljednji i pocetak kak spada
-lex_state = "S_a" #generic
+
+
+automatas = input["automatas"]
+analizer_states = input["analizer_states"]
+char_categories = input["char_categories"]
+
+lex_state = input["analizer_states"][0] #generic
+
 row = 1 
 pocetak_lex = 0
 posljednji_lex = 0
@@ -38,40 +39,32 @@ blokirani = []
 while zavrsetak_lex != len(line):
     izraz = []
     lista = []
-    for index, automata in enumerate(input["automatas"]):
-        #print("-----------------------")
+
+    for index, automata in enumerate(automatas):
         accept_state = set([automata["states"][1]])
         zavrsetak = zavrsetak_lex
         posljednji = posljednji_lex
         pocetak = pocetak_lex
         
-        #print(automata)
         r_set = epsilon_closure(automata, set([automata["states"][0]]))
-        while zavrsetak != len(line):
-            #print("R_SET", r_set)
-            #print("INTERSECT", r_set.intersection(accept_state), accept_state)
+        while True:
+            if not r_set or zavrsetak == len(line):
+                if index in izraz:
+                    lista.append([automata, pocetak, posljednji, zavrsetak])
+                break
+
             if r_set and not r_set.intersection(accept_state):
-                #print("IF")
                 a = line[zavrsetak]
-                #print("CITAM", a)
                 zavrsetak += 1
                 q_set = r_set.copy()
-
             elif r_set and r_set.intersection(accept_state):
-                #print("ELIF")
                 if lex_state == automata["lex_state"] and index not in blokirani and index not in izraz:
                     izraz.append(index)
+
                 posljednji = zavrsetak - 1
                 a = line[zavrsetak]
                 zavrsetak += 1
                 q_set = r_set
-                
-                #print("citam", a)
-            else:
-                #print("ELSE")
-                if index in izraz:
-                    lista.append([automata, pocetak, posljednji, zavrsetak])
-                break
 
             r_set = epsilon_closure(
                 automata,
@@ -88,24 +81,16 @@ while zavrsetak_lex != len(line):
                 )
             )
         
-
-            # #print("DRUGI", r_set)
-    #print("IZRAZ", izraz)
     if izraz:
-        #print("IMA IZRAZ")
-        #print(izraz)
-        
-        #sada tu dodati za sve za sve specijalne akcije bla bla bla
         lista_duljina = list(map(lambda x: x[2] - x[1], lista))
         index = lista_duljina.index(max(lista_duljina))
         autom = lista[index]
-        #print(autom)
+
         pocetak, posljednji, zavrsetak = autom[1:]
         special_actions = autom[0]["special_actions"]
 
         odbaci = False
         for action in special_actions:
-            #print("AKCIJA", action)
             if "-" == action:
                 odbaci = True
             if "NOVI_REDAK" == action:
@@ -115,20 +100,13 @@ while zavrsetak_lex != len(line):
 
         pocetak_lex, posljednji_lex, zavrsetak_lex = pocetak, posljednji, zavrsetak
         if not odbaci:
-            print(action, row, line[pocetak:posljednji+1])
+            print(special_actions[0], row, line[pocetak:posljednji+1])
             pocetak_lex = posljednji_lex + 1
             zavrsetak_lex = pocetak_lex
             blokirani.clear()
         else:
             zavrsetak_lex = pocetak_lex
-            #print("blokiran")
             blokirani.append(izraz[index])
     else:
-        #print("NEMA IZRAZA")
         pocetak_lex += 1
         zavrsetak_lex = pocetak_lex
-    #print(pocetak_lex, posljednji_lex, zavrsetak_lex)
-    #r_set = epsilon_closure(automata, set(automata["states"][0]))
-    #print("BLOKIRANI LISTA", blokirani)
-    #sleep(1)
-# #print(input["automatas"])
