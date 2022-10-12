@@ -1,6 +1,5 @@
 from util import is_operator
 
-
 def transform(expression, automata):
     options = []
     brackets_cnt = 0
@@ -13,13 +12,13 @@ def transform(expression, automata):
         elif brackets_cnt == 0 and expression[i] == '|' and is_operator(expression, i):
             options.append(expression[start_ind:i])
             start_ind = i + 1
-    if len(options) >= 1:
+    if options:
         options.append(expression[start_ind:])
 
     left_state = automata.create_state()
     right_state = automata.create_state()
 
-    if len(options) >= 1:
+    if options:
         for i in range(len(options)):
             #print(options[i])
             temp_left, temp_right = transform(options[i], automata)
@@ -71,7 +70,7 @@ def transform(expression, automata):
                             j = k
                             break
                     # find matching closing parentheses
-                    temp_left, temp_right = transform(expression[i + 1: j], automata)
+                    temp_left, temp_right = transform(expression[i+1:j], automata)
                     a = temp_left
                     b = temp_right
                     i = j

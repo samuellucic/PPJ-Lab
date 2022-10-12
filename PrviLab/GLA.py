@@ -1,6 +1,9 @@
 from sys import stdin
+from json import dump
+
 from Automata import Automata
 from regexToAutomata import transform
+
 
 if __name__ == '__main__':
     regular_definitions = {}
@@ -25,6 +28,8 @@ if __name__ == '__main__':
                 new_definition = regular_definitions[key].replace('{' + def_name + '}', '(' + regular_definitions[def_name] + ')')
                 regular_definitions.update({key: new_definition})
 
+    # u automat dodat stanje u kojem je aktivan i listu specijalnih akcija
+    # var za VRATI_SE, KLASA KOJU PRIHVACA, UDJI U STANJE
     automata = []
     states = []
     special_actions = []
@@ -35,29 +40,52 @@ if __name__ == '__main__':
             state = line[1:char_index]
             regex = line[char_index+1: ]
             #state, regex = line.split('>')
-            states.append(state[1:])
+            states.append(state)
             for def_name in regular_definitions:
                 if regex.find('{' + def_name + '}') != -1:
                     regex = regex.replace('{' + def_name + '}', '(' + regular_definitions[def_name] + ')')
             new_automata = Automata()
+            new_automata.lex_state = state
             transform(regex, new_automata)
             automata.append(new_automata)
         elif line[0] == '{':
             new_state = input()
             additional = input()
-            list = []
-            list.append(new_state)
+            lista = []
+            lista.append(new_state)
             while additional != '}':
-                list.append(additional)
+                lista.append(additional)
                 additional = input()
-            special_actions.append(list)
+            special_actions.append(lista)
+            automata[-1].special_actions = lista
 
-    f = open("prijelazi.txt", "w")
+    with open("prijelazi.json", "w") as f:
+        output = dict()
+        automatas = list()
 
-    for automat in automata:
-        print(automat)
-        print('====================')
-        f.write(automat.__str__())
-        f.write('====================\n')
+        for automat in automata:
+            automatas.append(
+                dict(
+                    states=list(map(str, automat.states)), 
+                    transitions=dict(
+                        map(
+                            lambda x: (
+                                x.__str__(), 
+                                automat.transitions[x]
+                            ), 
+                            automat.transitions
+                        )
+                    ),
+                    lex_state=automat.lex_state,
+                    special_actions=automat.special_actions
+                )
+            )
 
-    f.close()
+        output["automatas"] = automatas
+        # output["special_actions"] = special_actions
+        # output["states"] = states
+        print(special_actions)
+        print(len(special_actions))
+        print(states)
+        print(len(states))
+        dump(output, f)

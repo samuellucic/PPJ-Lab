@@ -4,8 +4,10 @@ from State import State, StatePair
 class Automata:
     def __init__(self):
         self.state_count = 0
-        self.states = []
-        self.transitions = {}
+        self.states = list()
+        self.transitions = dict()
+        self.lex_state = ""
+        self.special_actions = list()
 
     def __str__(self):
         states = 'Stanja: \n'
