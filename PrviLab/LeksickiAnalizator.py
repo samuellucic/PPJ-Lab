@@ -115,7 +115,7 @@ while zavrsetak_lex != len(line):
 
         pocetak_lex, posljednji_lex, zavrsetak_lex = pocetak, posljednji, zavrsetak
         if not odbaci:
-            print(action, row, line[pocetak:posljednji])
+            print(action, row, line[pocetak:posljednji+1])
             pocetak_lex = posljednji_lex + 1
             zavrsetak_lex = pocetak_lex
             blokirani.clear()
