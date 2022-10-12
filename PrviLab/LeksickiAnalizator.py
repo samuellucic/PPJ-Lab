@@ -1,9 +1,6 @@
-from pickle import FALSE
-from re import I
 from sys import stdin
 from json import loads
-from time import sleep
-from turtle import pos
+
 
 def epsilon_closure(automata: dict, stack: set) -> set:
     y = stack.copy()
