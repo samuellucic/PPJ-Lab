@@ -94,6 +94,9 @@ while zavrsetak_lex != len(line):
                 row += 1
             if "UDJI_U_STANJE" in action:
                 lex_state = action.split(" ")[1]
+            if "VRATI_SE" in action:
+                ind_vrati = action.split(" ")[1]
+                #implementiraj reset stvari
 
         pocetak_lex, posljednji_lex, zavrsetak_lex = pocetak, posljednji, zavrsetak
         if not odbaci:
