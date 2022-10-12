@@ -11,7 +11,7 @@ def epsilon_closure(automata: dict, stack: set) -> set:
     while stack:
         state_t = stack.pop()
 
-        for state_v in [state_v for state_v in automata["states"] if automata["transitions"].get(f"{state_t}:{state_v}") == "$"]:
+        for state_v in [state_v for state_v in automata["states"] if automata["transitions"].get(f"{state_t}:{state_v}") == "epsilon"]:
             if state_v not in y:
                 y.add(state_v)
                 stack.add(state_v)

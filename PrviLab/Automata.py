@@ -24,7 +24,7 @@ class Automata:
         return self.states[-1]
 
     def add_epsilon_transition(self, left_state, right_state):
-        self.transitions.update({StatePair(left_state, right_state): '$'})
+        self.transitions.update({StatePair(left_state, right_state): 'epsilon'})
 
     def add_transition(self, left_state, right_state, character):
         self.transitions.update({StatePair(left_state, right_state): character})
