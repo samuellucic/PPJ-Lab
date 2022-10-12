@@ -93,7 +93,7 @@ while zavrsetak_lex != len(line):
             if "NOVI_REDAK" == action:
                 row += 1
             if "UDJI_U_STANJE" in action:
-                lex_state = action.split("")[1]
+                lex_state = action.split(" ")[1]
 
         pocetak_lex, posljednji_lex, zavrsetak_lex = pocetak, posljednji, zavrsetak
         if not odbaci:

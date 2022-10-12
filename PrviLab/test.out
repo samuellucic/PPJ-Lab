@@ -1,17 +1,13 @@
-A 1 xabcbcaaca
-A 1 xabc
-A 1 xaaabbcc
-A 1 xabcbacbac
-B 2 oabbcca
-B 2 ocacaca
-B 2 obcbcbc
-B 2 oabbc
-B 2 oabca
-C 3 ababcccc
-C 3 abccc
-D 4 yaxxddz
-D 4 yaxxadz
-D 4 yaz
-D 4 yayyddz
-A 4 x
-A 4 x
+OPERAND 2 3
+OP MINUS 2 -
+UMINUS 2 -
+OPERAND 2 0x12
+OP MINUS 2 -
+LIJEVA ZAGRADA 2 (
+OPERAND 4 3
+OP MINUS 4 -
+UMINUS 4 -
+UMINUS 5 -
+UMINUS 5 -
+OPERAND 5 076
+DESNA ZAGRADA 5 )
