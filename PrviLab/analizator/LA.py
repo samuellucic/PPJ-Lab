@@ -1,6 +1,6 @@
+from os import path
 from sys import stdin, stderr
 from json import loads
-
 
 def epsilon_closure(automata: dict, stack: set) -> set:
     y = stack.copy()
@@ -15,7 +15,7 @@ def epsilon_closure(automata: dict, stack: set) -> set:
 
     return y
 
-with open("../prijelazi.json", "r") as file:
+with open(path.dirname(__file__) + "/../prijelazi.json", "r") as file:
     input = loads(file.read())
 
 line = stdin.read()

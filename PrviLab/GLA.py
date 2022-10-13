@@ -84,5 +84,5 @@ if __name__ == '__main__':
         output["automatas"] = automatas
         output["analizer_states"] = analizer_states
         output["char_categories"] = char_categories
-        print(output)
+        #print(output)
         dump(output, f)
