@@ -47,7 +47,7 @@ for automata in automatas:
 while zavrsetak_lex != len(line):
     izraz = []
     lista = []
-
+    #s = time()
     for index, automata in enumerate(automatas_by_state[lex_state]):
         accept_state = set([automata["states"][1]])
         zavrsetak = zavrsetak_lex
@@ -93,7 +93,7 @@ while zavrsetak_lex != len(line):
                     )
                 )
             )
-
+    #stderr.write(f"\n{len(automata['transitions'])}:" +  str(time() - s) + '\n')
     if izraz:
         lista_duljina = list(map(lambda x: x[2] - x[1], lista))
         index = lista_duljina.index(max(lista_duljina))
