@@ -51,7 +51,7 @@ while zavrsetak_lex != len(line):
     lista = []
 
     for index, automata in enumerate(automatas_by_state[lex_state]):
-        accept_state = set([automata["states"][1]])
+        automata_states = automata["states"]
         automata_transitions = dict(
             map(
                 lambda x: (x, automata["transitions"][x]), 
@@ -61,12 +61,13 @@ while zavrsetak_lex != len(line):
                 )
             )
         )
+        accept_state = set([automata_states[1]])
 
         zavrsetak = zavrsetak_lex
         posljednji = posljednji_lex
         pocetak = pocetak_lex
         #s = time()
-        r_set = epsilon_closure(automata, set([automata["states"][0]]))
+        r_set = epsilon_closure(automata, set([automata_states[0]]))
         while True:
             if not r_set or zavrsetak == len(line):
                 if r_set and r_set.intersection(accept_state) and index not in izraz:
