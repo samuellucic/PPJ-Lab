@@ -15,7 +15,7 @@ def epsilon_closure(automata: dict, stack: set) -> set:
 
     return y
 
-with open("prijelazi.json", "r") as file:
+with open("../prijelazi.json", "r") as file:
     input = loads(file.read())
 
 line = stdin.read()
@@ -24,8 +24,7 @@ line = stdin.read()
 automatas = input["automatas"]
 analizer_states = input["analizer_states"]
 char_categories = input["char_categories"]
-
-lex_state = input["analizer_states"][0] #generic
+lex_state = input["analizer_states"][0]
 
 row = 1 
 pocetak_lex = 0
