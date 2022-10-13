@@ -31,11 +31,21 @@ pocetak_lex = 0
 posljednji_lex = 0
 zavrsetak_lex = 0
 
+automatas_by_state = dict()
+
+for automata in automatas:
+    if automata["lex_state"] in automatas_by_state.keys():
+        curr_list = automatas_by_state[automata["lex_state"]]
+    else:
+        curr_list = list()
+    curr_list.append(automata)
+    automatas_by_state.update({automata["lex_state"]: curr_list})
+
 while zavrsetak_lex != len(line):
     izraz = []
     lista = []
 
-    for index, automata in enumerate(automatas):
+    for index, automata in enumerate(automatas_by_state[lex_state]):
         accept_state = set([automata["states"][1]])
         zavrsetak = zavrsetak_lex
         posljednji = posljednji_lex
@@ -44,7 +54,7 @@ while zavrsetak_lex != len(line):
         r_set = epsilon_closure(automata, set([automata["states"][0]]))
         while True:
             if not r_set or zavrsetak == len(line):
-                if r_set and r_set.intersection(accept_state) and lex_state == automata["lex_state"] and index not in izraz:
+                if r_set and r_set.intersection(accept_state) and index not in izraz:
                     posljednji = zavrsetak - 1
                     izraz.append(index)
 
@@ -58,7 +68,7 @@ while zavrsetak_lex != len(line):
                 zavrsetak += 1
                 q_set = r_set.copy()
             elif r_set and r_set.intersection(accept_state):
-                if lex_state == automata["lex_state"] and index not in izraz:
+                if index not in izraz:
                     izraz.append(index)
 
                 posljednji = zavrsetak - 1
