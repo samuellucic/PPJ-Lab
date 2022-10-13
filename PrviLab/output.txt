@@ -1,0 +1,63 @@
+Comparing files OUTPUTS\01_nadji_x.out and TESTS\01_NADJI_X\TEST.OUT
+FC: no differences encountered
+
+Comparing files OUTPUTS\03_nadji_x_oporavak.out and TESTS\03_NADJI_X_OPORAVAK\TEST.OUT
+FC: no differences encountered
+
+Comparing files OUTPUTS\05_regex_tezi.out and TESTS\05_REGEX_TEZI\TEST.OUT
+FC: no differences encountered
+
+Comparing files OUTPUTS\07_regex_regdefs.out and TESTS\07_REGEX_REGDEFS\TEST.OUT
+FC: no differences encountered
+
+Comparing files OUTPUTS\09_poredak.out and TESTS\09_POREDAK\TEST.OUT
+FC: no differences encountered
+
+Comparing files OUTPUTS\11_state_hopper.out and TESTS\11_STATE_HOPPER\TEST.OUT
+FC: no differences encountered
+
+Comparing files OUTPUTS\13_vrati_se.out and TESTS\13_VRATI_SE\TEST.OUT
+FC: no differences encountered
+
+Comparing files OUTPUTS\15_minusLang_laksi.out and TESTS\15_MINUSLANG_LAKSI\TEST.OUT
+FC: no differences encountered
+
+Comparing files OUTPUTS\17_simplePpjLang_laksi.out and TESTS\17_SIMPLEPPJLANG_LAKSI\TEST.OUT
+FC: no differences encountered
+
+Comparing files OUTPUTS\19_ppjLang_laksi.out and TESTS\19_PPJLANG_LAKSI\TEST.OUT
+FC: no differences encountered
+
+Comparing files OUTPUTS\21_kom4.out and TESTS\21_KOM4\TEST.OUT
+FC: no differences encountered
+
+Comparing files OUTPUTS\23_op4.out and TESTS\23_OP4\TEST.OUT
+FC: no differences encountered
+
+Comparing files OUTPUTS\25_prog3.out and TESTS\25_PROG3\TEST.OUT
+FC: no differences encountered
+
+Comparing files OUTPUTS\27_prog5.out and TESTS\27_PROG5\TEST.OUT
+FC: no differences encountered
+
+Comparing files OUTPUTS\29_veliki3.out and TESTS\29_VELIKI3\TEST.OUT
+FC: no differences encountered
+
+Comparing files OUTPUTS\integration_1.out and TESTS\INTEGRATION_1\TEST.OUT
+FC: no differences encountered
+
+Comparing files OUTPUTS\integration_2.out and TESTS\INTEGRATION_2\TEST.OUT
+FC: no differences encountered
+
+Comparing files OUTPUTS\integration_3.out and TESTS\INTEGRATION_3\TEST.OUT
+FC: no differences encountered
+
+Comparing files OUTPUTS\integration_4.out and TESTS\INTEGRATION_4\TEST.OUT
+FC: no differences encountered
+
+Comparing files OUTPUTS\integration_5.out and TESTS\INTEGRATION_5\TEST.OUT
+FC: no differences encountered
+
+Comparing files OUTPUTS\integration_6.out and TESTS\INTEGRATION_6\TEST.OUT
+FC: no differences encountered
+
