@@ -1,6 +1,9 @@
+from time import time
 from os import path
 from sys import stdin, stderr
 from json import loads
+
+start = time()
 
 def epsilon_closure(automata: dict, stack: set) -> set:
     y = stack.copy()
@@ -121,3 +124,5 @@ while zavrsetak_lex != len(line):
         stderr.write(repr(line[pocetak_lex]))
         pocetak_lex += 1
         zavrsetak_lex = pocetak_lex
+    
+stderr.write("\nVRIJEME:" +  str(time() - start) + '\n')
