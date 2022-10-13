@@ -1,4 +1,4 @@
-from sys import stdin
+from sys import stdin, stderr
 from json import loads
 
 
@@ -32,7 +32,6 @@ pocetak_lex = 0
 posljednji_lex = 0
 zavrsetak_lex = 0
 
-blokirani = []
 while zavrsetak_lex != len(line):
     izraz = []
     lista = []
@@ -42,12 +41,17 @@ while zavrsetak_lex != len(line):
         zavrsetak = zavrsetak_lex
         posljednji = posljednji_lex
         pocetak = pocetak_lex
-        
+
         r_set = epsilon_closure(automata, set([automata["states"][0]]))
         while True:
             if not r_set or zavrsetak == len(line):
+                if r_set and r_set.intersection(accept_state) and lex_state == automata["lex_state"] and index not in izraz:
+                    posljednji = zavrsetak - 1
+                    izraz.append(index)
+
                 if index in izraz:
                     lista.append([automata, pocetak, posljednji, zavrsetak])
+
                 break
 
             if r_set and not r_set.intersection(accept_state):
@@ -55,13 +59,13 @@ while zavrsetak_lex != len(line):
                 zavrsetak += 1
                 q_set = r_set.copy()
             elif r_set and r_set.intersection(accept_state):
-                if lex_state == automata["lex_state"] and index not in blokirani and index not in izraz:
+                if lex_state == automata["lex_state"] and index not in izraz:
                     izraz.append(index)
 
                 posljednji = zavrsetak - 1
                 a = line[zavrsetak]
                 zavrsetak += 1
-                q_set = r_set
+                q_set = r_set.copy()
 
             r_set = epsilon_closure(
                 automata,
@@ -77,7 +81,7 @@ while zavrsetak_lex != len(line):
                     )
                 )
             )
-        
+
     if izraz:
         lista_duljina = list(map(lambda x: x[2] - x[1], lista))
         index = lista_duljina.index(max(lista_duljina))
@@ -96,17 +100,15 @@ while zavrsetak_lex != len(line):
                 lex_state = action.split(" ")[1]
             if "VRATI_SE" in action:
                 ind_vrati = action.split(" ")[1]
-                #implementiraj reset stvari
+                posljednji = pocetak + int(ind_vrati) - 1
 
         pocetak_lex, posljednji_lex, zavrsetak_lex = pocetak, posljednji, zavrsetak
         if not odbaci:
             print(special_actions[0], row, line[pocetak:posljednji+1])
-            pocetak_lex = posljednji_lex + 1
-            zavrsetak_lex = pocetak_lex
-            blokirani.clear()
-        else:
-            zavrsetak_lex = pocetak_lex
-            blokirani.append(izraz[index])
+
+        pocetak_lex = posljednji_lex + 1
+        zavrsetak_lex = pocetak_lex
     else:
+        stderr.write(repr(line[pocetak_lex]))
         pocetak_lex += 1
         zavrsetak_lex = pocetak_lex
