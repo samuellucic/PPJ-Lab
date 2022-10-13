@@ -10,8 +10,10 @@ def epsilon_closure(automata: dict, stack: set) -> set:
 
     while stack:
         state_t = stack.pop()
+        automata_transitions = automata["transitions"]
+        automata_states = automata["states"]
 
-        for state_v in [state_v for state_v in automata["states"] if automata["transitions"].get(f"{state_t}:{state_v}") == "epsilon"]:
+        for state_v in [state_v for state_v in automata_states if automata_transitions.get(f"{state_t}:{state_v}") == "epsilon"]:
             if state_v not in y:
                 y.add(state_v)
                 stack.add(state_v)
@@ -47,13 +49,23 @@ for automata in automatas:
 while zavrsetak_lex != len(line):
     izraz = []
     lista = []
-    #s = time()
+
     for index, automata in enumerate(automatas_by_state[lex_state]):
         accept_state = set([automata["states"][1]])
+        automata_transitions = dict(
+            map(
+                lambda x: (x, automata["transitions"][x]), 
+                filter(
+                    lambda x: automata["transitions"][x] != "epsilon", 
+                    automata["transitions"]
+                )
+            )
+        )
+
         zavrsetak = zavrsetak_lex
         posljednji = posljednji_lex
         pocetak = pocetak_lex
-
+        #s = time()
         r_set = epsilon_closure(automata, set([automata["states"][0]]))
         while True:
             if not r_set or zavrsetak == len(line):
@@ -69,7 +81,7 @@ while zavrsetak_lex != len(line):
             if r_set and not r_set.intersection(accept_state):
                 a = line[zavrsetak]
                 zavrsetak += 1
-                q_set = r_set.copy()
+                q_set = r_set
             elif r_set and r_set.intersection(accept_state):
                 if index not in izraz:
                     izraz.append(index)
@@ -77,7 +89,7 @@ while zavrsetak_lex != len(line):
                 posljednji = zavrsetak - 1
                 a = line[zavrsetak]
                 zavrsetak += 1
-                q_set = r_set.copy()
+                q_set = r_set
 
             r_set = epsilon_closure(
                 automata,
@@ -86,14 +98,14 @@ while zavrsetak_lex != len(line):
                         lambda transition: transition.split(":")[1], 
                         list(
                             filter(
-                                lambda transition: transition.split(":")[0] in q_set and automata["transitions"][transition] == a, 
-                                automata["transitions"]
+                                lambda transition: transition.split(":")[0] in q_set and automata_transitions[transition] == a, 
+                                automata_transitions
                             )
                         )
                     )
                 )
             )
-    #stderr.write(f"\n{len(automata['transitions'])}:" +  str(time() - s) + '\n')
+        #stderr.write(f"\n{len(automata['transitions'])}:" +  str(time() - s) + '\n')
     if izraz:
         lista_duljina = list(map(lambda x: x[2] - x[1], lista))
         index = lista_duljina.index(max(lista_duljina))
