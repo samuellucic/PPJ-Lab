@@ -20,12 +20,10 @@ def epsilon_closure(automata: dict, stack: set) -> set:
 
     while stack:
         state_t = stack.pop()
-        s = time()
         for state_v in [state_v for state_v in automata_states if f"{state_t}:{state_v}" in automata_transitions]:
             if state_v not in y:
                 y.add(state_v)
                 stack.add(state_v)
-        #stderr.write(f"\n{len(automata['transitions'])}:" +  str(time() - s) + '\n')
     return y
 
 with open(path.dirname(__file__) + "/../prijelazi.json", "r") as file:
