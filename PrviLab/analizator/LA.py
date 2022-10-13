@@ -7,17 +7,25 @@ start = time()
 
 def epsilon_closure(automata: dict, stack: set) -> set:
     y = stack.copy()
+    automata_transitions = dict(
+        map(
+            lambda x: (x, automata["transitions"][x]), 
+            filter(
+                lambda x: automata["transitions"][x] == "epsilon", 
+                automata["transitions"]
+            )
+        )
+    ).keys()
+    automata_states = automata["states"]
 
     while stack:
         state_t = stack.pop()
-        automata_transitions = automata["transitions"]
-        automata_states = automata["states"]
-
-        for state_v in [state_v for state_v in automata_states if automata_transitions.get(f"{state_t}:{state_v}") == "epsilon"]:
+        s = time()
+        for state_v in [state_v for state_v in automata_states if f"{state_t}:{state_v}" in automata_transitions]:
             if state_v not in y:
                 y.add(state_v)
                 stack.add(state_v)
-
+        #stderr.write(f"\n{len(automata['transitions'])}:" +  str(time() - s) + '\n')
     return y
 
 with open(path.dirname(__file__) + "/../prijelazi.json", "r") as file:
@@ -66,7 +74,7 @@ while zavrsetak_lex != len(line):
         zavrsetak = zavrsetak_lex
         posljednji = posljednji_lex
         pocetak = pocetak_lex
-        #s = time()
+
         r_set = epsilon_closure(automata, set([automata_states[0]]))
         while True:
             if not r_set or zavrsetak == len(line):
@@ -106,7 +114,7 @@ while zavrsetak_lex != len(line):
                     )
                 )
             )
-        #stderr.write(f"\n{len(automata['transitions'])}:" +  str(time() - s) + '\n')
+
     if izraz:
         lista_duljina = list(map(lambda x: x[2] - x[1], lista))
         index = lista_duljina.index(max(lista_duljina))
