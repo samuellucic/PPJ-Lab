@@ -2,8 +2,11 @@
 cd tests
 for dir in ./*
 do
+	echo $dir
 	cd ..
-	py GLA.py < ./tests/$dir/*.lan
-	py ./analizator/LA.py < ./tests/$dir/*.in > ./outputs/"$dir".out
+	path=$(echo $dir| cut -c 3-)
+	echo $SUBSTRING
+	py GLA.py < ./tests/$path/test.lan
+	py ./analizator/LA.py < ./tests/$path/test.in > ./outputs/"$path".out
 	cd ./tests
 done)
