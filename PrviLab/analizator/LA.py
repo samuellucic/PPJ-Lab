@@ -118,6 +118,6 @@ while zavrsetak_lex != len(line):
         pocetak_lex = posljednji_lex + 1
         zavrsetak_lex = pocetak_lex
     else:
-        stderr.write(repr(line[pocetak_lex]))
+        stderr.write(repr(line[pocetak_lex])[1:-1])
         pocetak_lex += 1
         zavrsetak_lex = pocetak_lex
