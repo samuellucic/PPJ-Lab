@@ -48,6 +48,9 @@ for automata in automatas:
     curr_list.append(automata)
     automatas_by_state.update({automata["lex_state"]: curr_list})
 
+if not automatas:
+    automatas_by_state.update({lex_state: list()})
+
 while zavrsetak_lex != len(line):
     izraz = []
     lista = []
