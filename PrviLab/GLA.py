@@ -59,7 +59,7 @@ if __name__ == '__main__':
             special_actions.append(lista)
             automata[-1].special_actions = lista
 
-    with open("prijelazi.json", "w") as f:
+    with open(r"./analizator/prijelazi.json", "w") as f:
         output = dict()
         automatas = list()
 

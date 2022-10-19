@@ -6,6 +6,8 @@ do
 	path=$(echo $dir| cut -c 3-)
 	printf "\n----------\n$path\n----------\n"
 	py GLA.py < ./tests/$path/test.lan
-	py ./analizator/LA.py < ./tests/$path/test.in > ./outputs/"$path".out
+	cd ./analizator
+	py LA.py < ../tests/$path/test.in > ../outputs/"$path".out
+	cd ..
 	cd ./tests
 done)
