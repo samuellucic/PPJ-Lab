@@ -167,7 +167,7 @@ if __name__ == '__main__':
                 if unit.startswith(next_char + '->*'):
                     if unit not in enka.states:
                         enka.create_state(unit)
-                    enka.add_transition(parent_transition, unit, next_char)
+                    enka.add_epsilon_transition(parent_transition, unit)
                     if unit not in enka.lr1_sets.keys():
                         if rest_of_string == '':
                             enka.lr1_sets[unit] = [enka.lr1_sets[parent_transition]]
