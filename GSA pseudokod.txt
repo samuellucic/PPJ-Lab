@@ -40,8 +40,7 @@ rekurzija(prva lr(1)):
 						inace ako niz samo prazni znakovi:
 							skup lr(1) = skup lr(1) jedinke roditelja
 						lr(1) += Zapocinje(niz nakon tog znaka iz originalne produkcije)
-		za svaku novopovezanu lr(1) stavku:
-			rekurzija(nova lr(1))
+				rekurzija(nova lr(1))
 
 sad imas enka
 pretvori u nka (algo iz utr udzb, skip dio za prihvatljiva stanja jer su sva prihvatljiva)
