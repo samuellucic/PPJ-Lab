@@ -6,6 +6,7 @@ class Enka:
         self.state_count = 0
         self.states = list()
         self.transitions = dict()
+        self.lr1_sets = dict()
 
     def __str__(self):
         states = 'Stanja: \n'

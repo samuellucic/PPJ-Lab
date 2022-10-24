@@ -120,20 +120,27 @@ if __name__ == '__main__':
     lr1_units = dict()
     enka = Enka()
     enka.create_state('q0')
-    enka.create_state('{' + lr0_units[0] + ', (kraj)}')
-    enka.add_epsilon_transition('q0', '{' + lr0_units[0] + ', (kraj)}')
-    lr1_units.update({1: '{' + lr0_units[0] + ', (kraj)}'})
+    enka.create_state(lr0_units[0])
+    enka.lr1_sets.update({lr0_units[0]:'(kraj)'})
+    #enka.create_state('{' + lr0_units[0] + ', (kraj)}')
+    enka.add_epsilon_transition('q0', lr0_units[0])
+    #enka.add_epsilon_transition('q0', '{' + lr0_units[0] + ', (kraj)}')
+    lr1_units.update({lr0_units[0]: '(kraj)'})
 
     #print(enka)
-    #print(lr1_units[1])
+    #print(list(lr1_units.keys()))
 
-    def create_enka(enka, lr0_units, lr1_units, parent_node, states_cnt):
-        #Move dot in expression
-        parent_transition = parent_node.split(',')[0][1:]
+    def create_enka(enka, lr0_units, lr1_units, parent_transition, states_cnt):
+        #Find next character
+        #print(parent_transition)
         dot_index = parent_transition.find('*')
         leftover_string = parent_transition[dot_index + 1:]
         if (leftover_string == ''):
             return
+        next_char = parent_transition[dot_index + 1:].split(' ')[0]
+        #print(next_char)
+
+        #Move dot in expression
         space_index = leftover_string.find(' ')
         if (space_index == -1):
             leftover_string += '*'
@@ -145,6 +152,13 @@ if __name__ == '__main__':
             final_transition = parent_transition[:dot_index] + ' ' + leftover_string
         #print(final_transition)
 
-        #print(lr0_units.index(final_transition))
+        if next_char in grammar.nonfinal_chars or next_char in grammar.final_chars:
+            enka.create_state(final_transition)
+            enka.add_transition(parent_transition, final_transition, next_char)
         
-    create_enka(enka, lr0_units, lr1_units, lr1_units[1], states_cnt)
+    create_enka(enka, lr0_units, lr1_units, list(lr1_units.keys())[0], states_cnt)
+
+    print(enka)
+    #print(lr0_units)
+    #print(enka.lr1_sets)
+    #print(lr1_units)
