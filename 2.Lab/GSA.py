@@ -121,11 +121,11 @@ if __name__ == '__main__':
     enka = Enka()
     enka.create_state('q0')
     enka.create_state(lr0_units[0])
-    enka.lr1_sets.update({lr0_units[0]:'(kraj)'})
+    enka.lr1_sets.update({lr0_units[0]:['kraj']})
     #enka.create_state('{' + lr0_units[0] + ', (kraj)}')
     enka.add_epsilon_transition('q0', lr0_units[0])
     #enka.add_epsilon_transition('q0', '{' + lr0_units[0] + ', (kraj)}')
-    lr1_units.update({lr0_units[0]: '(kraj)'})
+    lr1_units.update({lr0_units[0]: ['kraj']})
 
     #print(enka)
     #print(list(lr1_units.keys()))
@@ -138,6 +138,8 @@ if __name__ == '__main__':
         if (leftover_string == ''):
             return
         next_char = parent_transition[dot_index + 1:].split(' ')[0]
+        rest_of_string = parent_transition[dot_index + 1:].split(' ')[1:]
+        #print(rest_of_string)
         #print(next_char)
 
         #Move dot in expression
@@ -153,16 +155,46 @@ if __name__ == '__main__':
         #print(final_transition)
 
         if next_char in grammar.nonfinal_chars or next_char in grammar.final_chars:
-            enka.create_state(final_transition)
+            if final_transition not in enka.states:
+                enka.create_state(final_transition)
             enka.add_transition(parent_transition, final_transition, next_char)
             if final_transition not in enka.lr1_sets.keys():
-                enka.lr1_sets[final_transition] = enka.lr1_sets[parent_transition]
-                lr1_units[final_transition] = lr1_units[parent_transition]
+                enka.lr1_sets[final_transition] = [enka.lr1_sets[parent_transition]]
+                lr1_units[final_transition] = [lr1_units[parent_transition]]
                 create_enka(enka, lr0_units, lr1_units, list(lr1_units.keys())[-1])
         if next_char in grammar.nonfinal_chars:
-            ...
-            #implementiraj ostatak algo
-        
+            for unit in lr0_units:
+                if unit.startswith(next_char + '->*'):
+                    if unit not in enka.states:
+                        enka.create_state(unit)
+                    enka.add_transition(parent_transition, unit, next_char)
+                    if unit not in enka.lr1_sets.keys():
+                        if rest_of_string == '':
+                            enka.lr1_sets[unit] = [enka.lr1_sets[parent_transition]]
+                            lr1_units[unit] = [lr1_units[parent_transition]]
+                        else:
+                            foundNonEmpty = False
+                            for char in rest_of_string:
+                                if char not in empty_chars:
+                                    foundNonEmpty = True
+                                    break
+                            if not foundNonEmpty:
+                                enka.lr1_sets[unit] = [enka.lr1_sets[parent_transition]]
+                                lr1_units[unit] = [lr1_units[parent_transition]]
+                            additional_chars = set()
+                            for char in rest_of_string:
+                                additional_chars.update(startsWithDict[char])
+                                if char not in empty_chars:
+                                    break
+                            if unit in enka.lr1_sets.keys():
+                                enka.lr1_sets[unit].append([additional_chars])
+                                lr1_units[unit].append([additional_chars])
+                            else:
+                                enka.lr1_sets[unit] = [additional_chars]
+                                lr1_units[unit] = [additional_chars]
+                        create_enka(enka, lr0_units, lr1_units, list(lr1_units.keys())[-1])
+
+
     create_enka(enka, lr0_units, lr1_units, list(lr1_units.keys())[0])
 
     print(enka)
