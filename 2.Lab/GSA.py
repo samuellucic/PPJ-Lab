@@ -1,4 +1,5 @@
 from sys import stdin
+import re
 
 from numpy import empty
 #from json import dump
@@ -45,3 +46,17 @@ if __name__ == '__main__':
 
     #print(empty_chars)
 
+    #calculate lr0 units
+    lr0_units = list()
+    for production in productions:
+        for right_side in productions[production]:
+            if (right_side == '$'):
+                lr0_units.append(production + '->*')
+            else:
+                lr0_units.append(production + '->*' + right_side)
+                indices = [m.start() for m in re.finditer(' ', right_side)]
+                for index in indices:
+                    lr0_units.append(production + '->' + (right_side[:index] + '*' + right_side[index+1:]))
+                lr0_units.append(production + '->' + right_side + '*')
+
+    #print(lr0_units)
