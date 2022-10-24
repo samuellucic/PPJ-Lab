@@ -116,7 +116,7 @@ if __name__ == '__main__':
     #print(lr0_units)
 
     #Calculate lr1 units
-    states_cnt = 1
+    #states_cnt = 1
     lr1_units = dict()
     enka = Enka()
     enka.create_state('q0')
@@ -130,7 +130,7 @@ if __name__ == '__main__':
     #print(enka)
     #print(list(lr1_units.keys()))
 
-    def create_enka(enka, lr0_units, lr1_units, parent_transition, states_cnt):
+    def create_enka(enka, lr0_units, lr1_units, parent_transition):
         #Find next character
         #print(parent_transition)
         dot_index = parent_transition.find('*')
@@ -155,8 +155,15 @@ if __name__ == '__main__':
         if next_char in grammar.nonfinal_chars or next_char in grammar.final_chars:
             enka.create_state(final_transition)
             enka.add_transition(parent_transition, final_transition, next_char)
+            if final_transition not in enka.lr1_sets.keys():
+                enka.lr1_sets[final_transition] = enka.lr1_sets[parent_transition]
+                lr1_units[final_transition] = lr1_units[parent_transition]
+                create_enka(enka, lr0_units, lr1_units, list(lr1_units.keys())[-1])
+        if next_char in grammar.nonfinal_chars:
+            ...
+            #implementiraj ostatak algo
         
-    create_enka(enka, lr0_units, lr1_units, list(lr1_units.keys())[0], states_cnt)
+    create_enka(enka, lr0_units, lr1_units, list(lr1_units.keys())[0])
 
     print(enka)
     #print(lr0_units)
