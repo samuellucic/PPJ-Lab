@@ -1,4 +1,6 @@
 from sys import stdin
+
+from numpy import empty
 #from json import dump
 
 from Enka import Enka
@@ -27,5 +29,19 @@ if __name__ == '__main__':
         else:
             grammar.add_production(left_side, line.strip())
 
-    print(grammar)
+    #print(grammar)
+
+    #determine empty characters
+    empty_chars = list()
+    productions = grammar.productions
+    changed = True
+    while changed:
+        changed = False
+        for production in productions:
+            for right_side in productions[production]:
+                if right_side == '$' or all(x in empty_chars for x in right_side.split(' ')):
+                    empty_chars.append(production)
+                    changes=True
+
+    #print(empty_chars)
 

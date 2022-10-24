@@ -23,6 +23,6 @@ class Grammar:
 
     def add_production(self, left_side, right_side):
         if left_side in self.productions.keys():
-            self.productions[left_side].extend(right_side)
+            self.productions[left_side].extend([right_side])
         else:
             self.productions[left_side] = [right_side]
