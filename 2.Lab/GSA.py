@@ -1,7 +1,7 @@
 from sys import stdin
 import re
+import numpy as np
 
-from numpy import empty
 #from json import dump
 
 from Enka import Enka
@@ -12,6 +12,7 @@ if __name__ == '__main__':
     #Parsing input data
     nonfinal = input().strip()
     nonfinal_chars = nonfinal.split(" ")[1:]
+    nonfinal_chars.insert(0, '<%>')
     starting_char = nonfinal_chars[0]
 
     final = input().strip()
@@ -24,6 +25,7 @@ if __name__ == '__main__':
     grammar = Grammar(starting_char, nonfinal_chars, final_chars, syn_chars)
 
     #Parsing productions
+    grammar.add_production(nonfinal_chars[0], nonfinal_chars[1])
     for line in stdin:
         if line[0] == '<':
             left_side = line.strip()
@@ -32,7 +34,7 @@ if __name__ == '__main__':
 
     #print(grammar)
 
-    #determine empty characters
+    #Determine empty characters
     empty_chars = list()
     productions = grammar.productions
     changed = True
@@ -40,13 +42,64 @@ if __name__ == '__main__':
         changed = False
         for production in productions:
             for right_side in productions[production]:
-                if right_side == '$' or all(x in empty_chars for x in right_side.split(' ')):
+                if (right_side == '$' or all(x in empty_chars for x in right_side.split(' '))) and production not in empty_chars:
                     empty_chars.append(production)
-                    changes=True
+                    changed = True
 
     #print(empty_chars)
 
-    #calculate lr0 units
+    #Calculate startsDirectlyWith table
+    final_cnt = len(grammar.final_chars)
+    nonfinal_cnt = len(grammar.nonfinal_chars)
+    no_of_chars = final_cnt + nonfinal_cnt
+    starts_with = [ [0] * no_of_chars for i in range(no_of_chars)]
+    
+    for production in productions:
+        left_ind = grammar.nonfinal_chars.index(production)
+        for right_side in productions[production]:
+            for char in right_side.split(' '):
+                if (char != '$'):
+                    right_ind = grammar.nonfinal_chars.index(char) if char in grammar.nonfinal_chars else grammar.final_chars.index(char) + nonfinal_cnt
+                    starts_with[left_ind][right_ind] = 1
+                    if (char not in empty_chars):
+                        break
+
+    for i in range(no_of_chars):
+        for j in range(no_of_chars):
+            if i == j:
+                starts_with[i][j] = 1
+
+    #print(np.matrix(starts_with))
+
+    #Calculate startsWith table
+    for i in range(nonfinal_cnt):
+        for j in range(no_of_chars):
+            if starts_with[i][j] == 1 and i != j:
+                for k in range(no_of_chars):
+                    if starts_with[j][k] == 1:
+                        starts_with[i][k] = 1
+
+    #print(np.matrix(starts_with))
+
+    #Calculate startsWith dict
+    startsWithDict = dict()
+    for i in range(no_of_chars):
+        left_char = grammar.nonfinal_chars[i] if i < nonfinal_cnt else grammar.final_chars[i - nonfinal_cnt]
+        for j in range(no_of_chars):
+            if starts_with[i][j] == 1 and i != j:
+                right_char = grammar.nonfinal_chars[j] if j < nonfinal_cnt else grammar.final_chars[j - nonfinal_cnt]
+                if right_char not in grammar.final_chars:
+                    continue
+                if left_char in startsWithDict.keys():
+                    startsWithDict[left_char].extend([right_char])
+                else:
+                    startsWithDict[left_char] = [right_char]
+
+    for char in final_chars:
+        startsWithDict[char] = [char]
+    print(startsWithDict)
+
+    #Calculate lr0 units
     lr0_units = list()
     for production in productions:
         for right_side in productions[production]:

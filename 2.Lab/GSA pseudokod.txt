@@ -1,9 +1,9 @@
 GENERATOR ALGO
 
-dodaj produkciju S'->S
-dodaj pocetni znak q0
+dodaj produkciju S'->S				<- done
+dodaj pocetni znak q0				<- mozda
 
-odredi sve prazne znakove:
+odredi sve prazne znakove:			<-done
 	promjena = True
 	u skup dodaj sve koji imaju eps produkcije
 	while(promjena):
@@ -12,12 +12,12 @@ odredi sve prazne znakove:
 			ako uspjesno:
 				promjena = True
 	
-odredi sve skupove Zapocinje:
+odredi sve skupove Zapocinje:		<-done
 	udzb str 101, relacija ZapocinjeIzravnoZnakom, relacija ZapocinjeZnakom
 
-odredi sve lr(0) jedinke
+odredi sve lr(0) jedinke			<-done
 
-prvo q0 u S' eps prijelaz, S' ce biti dodana produkcija sa skupom zavrsnog znaka niza
+prvo q0 u S' eps prijelaz, S' ce biti dodana produkcija sa skupom zavrsnog znaka niza <-mozda
 
 rekurzija(prva lr(1)):
 	ako znak nakon tocke == zavrsni znak niza:
