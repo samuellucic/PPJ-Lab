@@ -10,14 +10,16 @@ class Enka:
     def __str__(self):
         states = 'Stanja: \n'
         for state in self.states:
-            states += (str(state) + ' ')
+            states += (str(state) + '\n')
+        states = states.strip()
         transitions = 'Prijelazi: \n'
         for transition in self.transitions:
-            transitions += (str(transition) + ' sa znakom ' + repr(self.transitions[transition]) + '\n')
+            transitions += (str(transition) + ' with ' + repr(self.transitions[transition]) + '\n')
+        transitions = transitions.strip()
         return states + '\n--------------------\n' + transitions
 
-    def create_state(self):
-        self.states.append(State().__str__())
+    def create_state(self, state_label):
+        self.states.append(State(state_label).__str__())
         self.state_count += 1
         return self.states[-1]
 

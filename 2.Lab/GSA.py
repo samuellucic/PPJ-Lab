@@ -1,6 +1,7 @@
 from sys import stdin
 import re
-import numpy as np
+from turtle import dot
+#import numpy as np
 
 #from json import dump
 
@@ -97,7 +98,7 @@ if __name__ == '__main__':
 
     for char in final_chars:
         startsWithDict[char] = [char]
-    print(startsWithDict)
+    #print(startsWithDict)
 
     #Calculate lr0 units
     lr0_units = list()
@@ -113,3 +114,37 @@ if __name__ == '__main__':
                 lr0_units.append(production + '->' + right_side + '*')
 
     #print(lr0_units)
+
+    #Calculate lr1 units
+    states_cnt = 1
+    lr1_units = dict()
+    enka = Enka()
+    enka.create_state('q0')
+    enka.create_state('{' + lr0_units[0] + ', (kraj)}')
+    enka.add_epsilon_transition('q0', '{' + lr0_units[0] + ', (kraj)}')
+    lr1_units.update({1: '{' + lr0_units[0] + ', (kraj)}'})
+
+    #print(enka)
+    #print(lr1_units[1])
+
+    def create_enka(enka, lr0_units, lr1_units, parent_node, states_cnt):
+        #Move dot in expression
+        parent_transition = parent_node.split(',')[0][1:]
+        dot_index = parent_transition.find('*')
+        leftover_string = parent_transition[dot_index + 1:]
+        if (leftover_string == ''):
+            return
+        space_index = leftover_string.find(' ')
+        if (space_index == -1):
+            leftover_string += '*'
+        else:
+            leftover_string = leftover_string[:space_index] + '*' + leftover_string[space_index + 1:]
+        if parent_transition[dot_index - 2: dot_index] == '->':
+            final_transition = parent_transition[:dot_index] + leftover_string
+        else:
+            final_transition = parent_transition[:dot_index] + ' ' + leftover_string
+        #print(final_transition)
+
+        #print(lr0_units.index(final_transition))
+        
+    create_enka(enka, lr0_units, lr1_units, lr1_units[1], states_cnt)

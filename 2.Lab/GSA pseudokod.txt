@@ -1,7 +1,8 @@
 GENERATOR ALGO
 
+/Dominik
 dodaj produkciju S'->S				<- done
-dodaj pocetni znak q0				<- mozda
+dodaj pocetni znak q0				<- done
 
 odredi sve prazne znakove:			<-done
 	promjena = True
@@ -17,7 +18,7 @@ odredi sve skupove Zapocinje:		<-done
 
 odredi sve lr(0) jedinke			<-done
 
-prvo q0 u S' eps prijelaz, S' ce biti dodana produkcija sa skupom zavrsnog znaka niza <-mozda
+prvo q0 u S' eps prijelaz, S' ce biti dodana produkcija sa skupom zavrsnog znaka niza <-done
 
 rekurzija(prva lr(1)):
 	ako znak nakon tocke == zavrsni znak niza:
@@ -42,6 +43,7 @@ rekurzija(prva lr(1)):
 						lr(1) += Zapocinje(niz nakon tog znaka iz originalne produkcije)
 				rekurzija(nova lr(1))																	(1)
 
+/Samuel
 sad imas enka
 pretvori u nka (algo iz utr udzb, skip dio za prihvatljiva stanja jer su sva prihvatljiva)
 pretvoru u dka (algo iz utr udzb, skip dio za prihvatljiva stanja jer su sva prihvatljiva)
