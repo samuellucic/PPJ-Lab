@@ -193,4 +193,5 @@ if __name__ == '__main__':
     create_enka(enka, lr0_units, enka.states[-1])
     print(enka)
     #print(enka.state_count)
+    #print(len(enka.transitions))
     #print(lr0_units)
