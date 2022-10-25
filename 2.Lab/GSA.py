@@ -1,12 +1,16 @@
 from sys import stdin
 import re
 from turtle import dot
-#import numpy as np
 
+#import numpy as np
 #from json import dump
 
 from Enka import Enka
 from Grammar import Grammar
+from State import StatePair
+from Nka import Nka
+from Dka import Dka
+
 
 if __name__ == '__main__':
 
@@ -197,7 +201,66 @@ if __name__ == '__main__':
 
     create_enka(enka, lr0_units, lr1_units, list(lr1_units.keys())[0])
 
-    print(enka)
+    #print(enka)
     #print(lr0_units)
     #print(enka.lr1_sets)
     #print(lr1_units)
+
+    def get_epsilon_closure(stack: set) -> set:
+        epsilon_closure = stack.copy()
+
+        while stack:
+            state_t = stack.pop()
+
+            for state_v in [state_v for state_v in states if transitions.get(StatePair(state_t, state_v)) == "epsilon"]:
+                if state_v not in epsilon_closure:
+                    epsilon_closure.add(state_v)
+                    stack.add(state_v)
+
+        return epsilon_closure
+
+    nka = Nka()
+    nka.states = enka.states
+
+    states = enka.states
+    transitions = enka.transitions
+    symbols = {transitions[transition] for transition in transitions if transitions[transition] != "epsilon"}
+
+    for state in states:
+        for symbol in symbols:
+            epsilon_closure_first = get_epsilon_closure({state})
+            epsilon_closure_states = {transition.second_state for transition in transitions if transition.first_state in epsilon_closure_first and transitions[transition] == symbol}
+            
+            if epsilon_closure_states:
+                epsilon_closure = get_epsilon_closure(epsilon_closure_states)
+
+                for eps_state in epsilon_closure:
+                    nka.add_transition(state, eps_state, symbol)
+    print(nka)
+
+    def nka_to_dka(start_state: str) -> list:
+        states = [start_state]
+        new_transitions = dict()
+
+        is_new_state_added = True
+        while is_new_state_added:
+            is_new_state_added = False
+
+            for current_state in states:
+                for symbol in symbols:
+                    new_state = ",".join({transition.second_state for transition in transitions if transition.first_state in current_state.split(",") and transitions[transition] == symbol})
+                    
+                    if new_state and new_state not in states:
+                        is_new_state_added = True
+                        states.append(new_state)
+                        dka.add_transition(current_state, new_state, symbol)
+                        print(current_state, "|", new_state)
+        print(states)
+
+    dka = Dka()
+    dka.lr1_sets = enka.lr1_sets
+
+    transitions = nka.transitions
+
+    nka_to_dka(states[0])
+    print(dka)

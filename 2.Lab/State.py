@@ -22,3 +22,11 @@ class StatePair:
 
     def __str__(self):
         return '[' + str(self.first_state) + ' : ' + str(self.second_state) + ']'
+
+    def __hash__(self):
+        return hash((self.first_state, self.second_state))
+
+    def __eq__(self, other):
+        if isinstance(other, self.__class__):
+            return self.first_state == other.first_state and self.second_state == other.second_state
+        return False
