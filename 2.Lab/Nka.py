@@ -18,4 +18,8 @@ class Nka:
         return states + '\n--------------------\n' + transitions
 
     def add_transition(self, left_state, right_state, character):
+        if left_state not in self.states:
+            raise Exception('Left state doesn\'t exist.')
+        if right_state not in self.states:
+            raise Exception('Right state doesn\'t exist.')
         self.transitions.update({StatePair(left_state, right_state): character})

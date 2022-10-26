@@ -21,7 +21,7 @@ class StatePair:
         self.second_state = second_state
 
     def __str__(self):
-        return '[' + str(self.first_state) + ' : ' + str(self.second_state) + ']'
+        return '[' + str(self.first_state) + ' ----- ' + str(self.second_state) + ']'
 
     def __hash__(self):
         return hash((self.first_state, self.second_state))
