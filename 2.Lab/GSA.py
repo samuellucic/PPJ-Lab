@@ -10,7 +10,6 @@ from turtle import dot
 from Enka import Enka
 from Grammar import Grammar
 from State import StatePair
-from Nka import Nka
 from Dka import Dka
 
 
@@ -215,72 +214,34 @@ if __name__ == '__main__':
 
         return epsilon_closure
 
-    nka = Nka()
-    nka.states = enka.states
-
     states = enka.states
     transitions = enka.transitions
     symbols = sorted(set([transitions[transition] for transition in transitions if transitions[transition] != "epsilon"]))
-
-    for state in states:
+    
+    def enka_to_dka(state):
         for symbol in symbols:
+            is_added = False
             epsilon_closure_first = get_epsilon_closure({state})
             epsilon_closure_states = set([transition.second_state for transition in transitions if transition.first_state in epsilon_closure_first and transitions[transition] == symbol])
-            
+
             if epsilon_closure_states:
-                epsilon_closure = get_epsilon_closure(epsilon_closure_states)
+                epsilon_closure = get_epsilon_closure(epsilon_closure_states.copy())
 
-                for eps_state in epsilon_closure:
-                    nka.add_transition(state, eps_state, symbol)
+                if "#$#".join(epsilon_closure_first) not in dka.states:
+                    dka.create_state("#$#".join(epsilon_closure_first))
 
-    print(nka)
+                if "#$#".join(epsilon_closure) not in dka.states:
+                    is_added = True
+                    dka.create_state("#$#".join(epsilon_closure))
 
-    def nka_to_dka(start_state: list) -> list:
-        print("START", start_state, len(start_state[0]))
-        states = start_state
-        if len(start_state[0]) == 78:
-            print("EVOOOOOOOOOOOOOOOOOOOOOOOOO GAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
-        for current_state in states:
-            for symbol in symbols:
-                for transition in transitions:
-                    if len(start_state[0]) == 82:
-                        print(transition.first_state, current_state.split("#$#"), any(transition.first_state == segment for segment in current_state.split("#$#")), any(symbol == symb for symb in transitions[transition]))
-                    if any(transition.first_state == segment for segment in current_state.split("#$#")) and any(symbol == symb for symb in transitions[transition]):
-                        print(transition.second_state)
+                dka.add_transition("#$#".join(epsilon_closure_first), "#$#".join(epsilon_closure), symbol)
 
-                new_state = "#$#".join(
-                    sorted(
-                        set(
-                            [transition.second_state for transition in transitions if any(transition.first_state == segment for segment in current_state.split("#$#")) and any(symbol == symb for symb in transitions[transition])]
-                        )
-                    )
-                )
-
-                if new_state:
-                    print("SIMBOL", symbol, "NEW STATE", new_state)
-                    if new_state not in dka.states:
-                        print("UŠAO")
-                        dka.create_state(new_state)
-                        nka_to_dka([new_state])
-                        print("VRATIO", start_state)
-                    dka.add_transition(current_state, new_state, symbol)
+                if is_added:
+                    enka_to_dka(list(epsilon_closure_states)[0])
 
     dka = Dka()
-    
-    transitions = nka.transitions
+    enka_to_dka(states[0])
 
-    # for state_with_transition in states:
-    #     if (state_with_transition not in dka.states 
-    #             and state_with_transition.split(";")[0].strip()[-1] != "*"):
-    #         dka.create_state(state_with_transition)
-    #         nka_to_dka([state_with_transition])
-    dka.create_state(states[1])
-    nka_to_dka([states[1]])
-    dka.create_state(states[0])
-    nka_to_dka([states[0]])
-
-
-    print(dka)
     dka.create_state("(None)")
     transitions_by_left = dict()
 
@@ -295,8 +256,6 @@ if __name__ == '__main__':
         for symbol in symbols:
             if transitions_by_left.get(state_1) == None or transitions_by_left.get(state_1).get(symbol) == None:
                 dka.add_transition(state_1, "(None)", symbol)
-    
-
     
     transitions_by_left = dict()
 
@@ -313,7 +272,6 @@ if __name__ == '__main__':
     transitions = dka.transitions
 
     dka_min = Dka()
-    print(dka)
 
     def min_dka(group_list_a):
         
@@ -353,21 +311,26 @@ if __name__ == '__main__':
 
                 if group[-1] not in [elem for item in new_list for elem in item]:
                     new_list.append([group[-1]])
-            # print("GROUP")
-            # for i in group_list_a:
-            #     print(i)
-            print("---------------------")
-            print("NEW")
-            for i in new_list:
-                print(i)
+
             if len(group_list_a) != len(new_list):
                 is_changed = True
+
             group_list_a = new_list
-        print(group_list_a)
+
+        return group_list_a
 
     accept_set = states.copy()
     accept_set.remove("(None)")
     group_list = list()
     group_list.extend([accept_set, ["(None)"]])
     
-    min_dka(group_list)
+    a = min_dka(group_list)
+
+    for i in a:
+        print("STATE")
+        for j in i:
+            j = j.split("#$#")
+            j.sort()
+
+            for k in j:
+                print(k)    
