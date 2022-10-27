@@ -1,8 +1,5 @@
-from sre_parse import State
 from sys import stdin
 import re
-from tokenize import group
-from turtle import dot
 
 #import numpy as np
 #from json import dump
@@ -11,6 +8,7 @@ from Enka import Enka
 from Grammar import Grammar
 from State import StatePair
 from Dka import Dka
+from Table import Table
 
 
 if __name__ == '__main__':
@@ -271,6 +269,7 @@ if __name__ == '__main__':
     states = dka.states
     transitions = dka.transitions
 
+    ####postoji šansa da odavde do idućeg komentara
     dka_min = Dka()
 
     def min_dka(group_list_a):
@@ -316,7 +315,6 @@ if __name__ == '__main__':
                 is_changed = True
 
             group_list_a = new_list
-
         return group_list_a
 
     accept_set = states.copy()
@@ -324,13 +322,115 @@ if __name__ == '__main__':
     group_list = list()
     group_list.extend([accept_set, ["(None)"]])
     
-    a = min_dka(group_list)
+    group_list = min_dka(group_list)
 
-    for i in a:
-        print("STATE")
-        for j in i:
-            j = j.split("#$#")
-            j.sort()
+    for states_list in group_list:
+        for states in states_list:
+            merged_state = []
 
-            for k in j:
-                print(k)    
+            if states == "(None)":
+                continue
+
+            for state in states.split("#$#"):
+                merged_state.append(state)
+
+            dka_min.create_state("#$#".join(sorted(set(merged_state))))
+
+    dka_states = dka_min.states
+
+    for states_list_index in range(len(group_list)):
+        for symbol in symbols:
+            merged_state_2 = []
+
+            for states in group_list[states_list_index]:
+                merged_state_2.append("#$#".join(sorted(set(transitions_by_left.get(states).get(symbol).split("#$#")))))
+
+            number = None
+            for index_dka_states in range(len(dka_states)):
+                is_in = False
+                for index_second_state in range(len(merged_state_2)):
+                    if merged_state_2[index_second_state] in dka_states[index_dka_states]:
+                        is_in = True
+                        number = index_dka_states
+                        break
+                
+                if is_in:
+                    break
+
+            if not number:
+                print("NIJE PROSLO", dka_states[index_1])
+                print("NIJE PROSLO", merged_state_2)
+                continue
+
+            index_1 = states_list_index
+            index_2 = number
+
+            dka_min.add_transition(dka_states[index_1], dka_states[index_2], symbol)
+    ############## nema potrebe za ovim jer se sve grupira direktno, testirat ćemo oba načina pa vidjet  
+    print(dka_min)
+    #brisati <%> stanje ?
+    #zasada hardkodirano
+    #dka_min.states.remove("<%>-><S>* ; {#}")
+    #dka_min.state_count -= 1
+
+    nonfinal_chars = nonfinal_chars[1:]
+    final_chars.append("#")
+    print(nonfinal_chars)
+    print(final_chars)
+    print("\n\n\n")
+
+    transitions_by_left = dict()
+
+    for ts in dka_min.transitions:
+        for t in dka_min.transitions[ts]:
+            if transitions_by_left.get(ts.first_state) == None:
+                transitions_by_left.update({ts.first_state: dict()})
+        
+            transitions_by_left.get(ts.first_state).update({t: ts.second_state})
+
+    table = Table(dka_min.state_count, final_chars + nonfinal_chars)
+    states = dka_min.states
+
+    for table_state in range(dka_min.state_count):
+        for char in final_chars + nonfinal_chars:
+            for state in states[table_state].split("#$#"):
+                if state == "q0":
+                    continue
+
+                state, lr1 = state.split(";")
+                state, lr1 = state.strip(), lr1.replace("{", "").replace("}", "").replace("'", "").strip()
+
+                dot_index = state.find("*")
+                if char in final_chars and dot_index != len(state) - 1 and state[dot_index + 1] in final_chars:
+                    if transitions_by_left.get(states[table_state]):
+                        new_state = transitions_by_left.get(states[table_state]).get(char)
+
+                        if new_state:
+                            index = states.index(new_state)
+                            table.put(table_state, char, f"Pomakni({index})")
+
+                        break
+                elif char in final_chars and dot_index == len(state) - 1:
+                    if char in lr1.split(","):
+                        state = state.replace('*', '').replace(' ', '')
+                        if len(state.split("->")[1]) == 0:
+                            state += "epsilon"
+
+                        table.put(table_state, char, f"Reduciraj({state})")
+
+                        break
+                elif state == f"<%>->{nonfinal_chars[0]}*" and lr1 == "#":
+                    table.put(table_state, "#", "Prihvati()")
+
+                    break
+                elif char in nonfinal_chars:
+                    if transitions_by_left.get(states[table_state]):
+                        new_state = transitions_by_left.get(states[table_state]).get(char)
+
+                        if new_state:
+                            index = states.index(new_state)
+                            table.put(table_state, char, f"Stavi({index})")
+
+                        break
+
+    print(table.df)
