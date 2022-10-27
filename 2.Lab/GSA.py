@@ -1,6 +1,7 @@
 from sre_parse import State
 from sys import stdin
 import re
+from tokenize import group
 from turtle import dot
 
 #import numpy as np
@@ -121,91 +122,85 @@ if __name__ == '__main__':
     #print(lr0_units)
 
     #Calculate lr1 units
-    lr1_units = dict()
     enka = Enka()
     enka.create_state('q0')
-    enka.create_state(lr0_units[0])
-    enka.lr1_sets.update({lr0_units[0]:set('#')})
-    enka.add_epsilon_transition('q0', lr0_units[0])
-    lr1_units.update({lr0_units[0]: set('#')})
+    enka.create_state(lr0_units[0] + ' ; {#}')
+    enka.add_epsilon_transition('q0', lr0_units[0] + ' ; {#}')
 
     #print(enka)
-    #print(list(lr1_units.keys()))
 
-    def create_enka(enka, lr0_units, lr1_units, parent_transition):
+    def create_enka(enka, lr0_units, parent_transition):
         #Find next character
-        #print(parent_transition)
-        dot_index = parent_transition.find('*')
-        leftover_string = parent_transition[dot_index + 1:]
+        parent_transition_new, parent_set = parent_transition.split(' ; ')
+        dot_index = parent_transition_new.find('*')
+        leftover_string = parent_transition_new[dot_index + 1:]
         if (leftover_string == ''):
             return
-        next_char = parent_transition[dot_index + 1:].split(' ')[0]
-        rest_of_string = parent_transition[dot_index + 1:].split(' ')[1:]
-        #print(rest_of_string)
-        #print(next_char)
-
+        next_char = parent_transition_new[dot_index + 1:].split(' ')[0]
+        rest_of_string = parent_transition_new[dot_index + 1:].split(' ')[1:]
+        rest_of_string = '' if rest_of_string == [] else rest_of_string
+        
         #Move dot in expression
         space_index = leftover_string.find(' ')
         if (space_index == -1):
             leftover_string += '*'
         else:
             leftover_string = leftover_string[:space_index] + '*' + leftover_string[space_index + 1:]
-        if parent_transition[dot_index - 2: dot_index] == '->':
-            final_transition = parent_transition[:dot_index] + leftover_string
-        else:
-            final_transition = parent_transition[:dot_index] + ' ' + leftover_string
-        #print(final_transition)
 
+        if parent_transition_new[dot_index - 2: dot_index] == '->':
+            final_transition = parent_transition_new[:dot_index] + leftover_string
+        else:
+            final_transition = parent_transition_new[:dot_index] + ' ' + leftover_string
+        #print(final_transition)
+        
         if next_char in grammar.nonfinal_chars or next_char in grammar.final_chars:
-            if final_transition not in enka.states:
-                enka.create_state(final_transition)
-            enka.add_transition(parent_transition, final_transition, next_char)
-            if final_transition not in enka.lr1_sets.keys():
-                enka.lr1_sets[final_transition] = set(enka.lr1_sets[parent_transition])
-                lr1_units[final_transition] = set(lr1_units[parent_transition])
-                create_enka(enka, lr0_units, lr1_units, list(lr1_units.keys())[-1])
+            lr1_unit = final_transition + ' ; ' + parent_set
+            #print(lr1_unit)          
+            if lr1_unit not in enka.states:
+                enka.create_state(lr1_unit)
+                enka.add_transition(parent_transition, lr1_unit, next_char)
+                create_enka(enka, lr0_units, lr1_unit)
+
         if next_char in grammar.nonfinal_chars:
             for unit in lr0_units:
                 if unit.startswith(next_char + '->*'):
-                    if unit not in enka.states:
-                        enka.create_state(unit)
-                    enka.add_epsilon_transition(parent_transition, unit)
-                    if unit not in enka.lr1_sets.keys():
-                        if rest_of_string == '':
-                            enka.lr1_sets[unit] = set(enka.lr1_sets[parent_transition])
-                            lr1_units[unit] = set(lr1_units[parent_transition])
+                    #print(rest_of_string)
+                    #add eps trans
+                    if rest_of_string == '':
+                        lr1_unit = unit + ' ; ' + parent_set
+                        if lr1_unit not in enka.states:
+                            enka.create_state(lr1_unit)
+                            enka.add_epsilon_transition(parent_transition, lr1_unit)
+                            create_enka(enka, lr0_units, lr1_unit)
                         else:
-                            foundNonEmpty = False
-                            for char in rest_of_string:
-                                if char not in empty_chars:
-                                    foundNonEmpty = True
-                                    break
-                            if not foundNonEmpty:
-                                enka.lr1_sets[unit] = set(enka.lr1_sets[parent_transition])
-                                lr1_units[unit] = set(lr1_units[parent_transition])
-                            additional_chars = set()
-                            for char in rest_of_string:
-                                additional_chars.update(startsWithDict[char])
-                                if char not in empty_chars:
-                                    break
-                            if unit in enka.lr1_sets.keys():
-                                enka.lr1_sets[unit] = enka.lr1_sets[unit].union(additional_chars)
-                                lr1_units[unit] = lr1_units[unit].union(additional_chars)
-                            else:
-                                enka.lr1_sets[unit] = set(additional_chars)
-                                lr1_units[unit] = (additional_chars)
-                        create_enka(enka, lr0_units, lr1_units, list(lr1_units.keys())[-1])
+                            enka.add_epsilon_transition(parent_transition, lr1_unit)
+                    else:
+                        foundNonEmpty = False
+                        for char in rest_of_string:
+                            if char not in empty_chars:
+                                foundNonEmpty = True
+                                break   
+                        additional_chars = set()
+                        for char in rest_of_string:
+                            additional_chars.update(startsWithDict[char])
+                            if char not in empty_chars:
+                                break
+                        if not foundNonEmpty:
+                            additional_chars = additional_chars.union(set(parent_set[1:-1].split(',')))
+                        
+                        lr1_unit = unit + ' ; ' + str(additional_chars).replace(' ', '')
+                        if lr1_unit not in enka.states:
+                            enka.create_state(lr1_unit)
+                            enka.add_epsilon_transition(parent_transition, lr1_unit)
+                            create_enka(enka, lr0_units, lr1_unit)
+                        else:
+                            enka.add_epsilon_transition(parent_transition, lr1_unit)
 
-
-    create_enka(enka, lr0_units, lr1_units, list(lr1_units.keys())[0])
-
-    #print(enka)
+    create_enka(enka, lr0_units, enka.states[-1])
+    print(enka)
+    #print(enka.state_count)
+    #print(len(enka.transitions))
     #print(lr0_units)
-    #print(enka.lr1_sets)
-    for key, value in enka.lr1_sets.items():
-        print(f'Kljuc: {key}')
-        print(f'Vrijednost: {value}')
-    #print(lr1_units)
 
     def get_epsilon_closure(stack: set) -> set:
         epsilon_closure = stack.copy()
@@ -240,31 +235,52 @@ if __name__ == '__main__':
 
     print(nka)
 
-    print(lr1_units)
-
     def nka_to_dka(start_state: list) -> list:
+        print("START", start_state, len(start_state[0]))
         states = start_state
-
+        if len(start_state[0]) == 78:
+            print("EVOOOOOOOOOOOOOOOOOOOOOOOOO GAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
         for current_state in states:
             for symbol in symbols:
-                new_state = ",".join(sorted(set([transition.second_state for transition in transitions if transition.first_state in current_state.split(",") and symbol in transitions[transition]])))
+                for transition in transitions:
+                    if len(start_state[0]) == 82:
+                        print(transition.first_state, current_state.split("#$#"), any(transition.first_state == segment for segment in current_state.split("#$#")), any(symbol == symb for symb in transitions[transition]))
+                    if any(transition.first_state == segment for segment in current_state.split("#$#")) and any(symbol == symb for symb in transitions[transition]):
+                        print(transition.second_state)
+
+                new_state = "#$#".join(
+                    sorted(
+                        set(
+                            [transition.second_state for transition in transitions if any(transition.first_state == segment for segment in current_state.split("#$#")) and any(symbol == symb for symb in transitions[transition])]
+                        )
+                    )
+                )
 
                 if new_state:
+                    print("SIMBOL", symbol, "NEW STATE", new_state)
                     if new_state not in dka.states:
+                        print("UŠAO")
                         dka.create_state(new_state)
                         nka_to_dka([new_state])
+                        print("VRATIO", start_state)
                     dka.add_transition(current_state, new_state, symbol)
 
     dka = Dka()
-    dka.lr1_sets = enka.lr1_sets
     
     transitions = nka.transitions
 
-    for state_with_transition in states:
-        if state_with_transition not in dka.states:
-            dka.create_state(state_with_transition)
-        nka_to_dka([state_with_transition])
-    
+    # for state_with_transition in states:
+    #     if (state_with_transition not in dka.states 
+    #             and state_with_transition.split(";")[0].strip()[-1] != "*"):
+    #         dka.create_state(state_with_transition)
+    #         nka_to_dka([state_with_transition])
+    dka.create_state(states[1])
+    nka_to_dka([states[1]])
+    dka.create_state(states[0])
+    nka_to_dka([states[0]])
+
+
+    print(dka)
     dka.create_state("(None)")
     transitions_by_left = dict()
 
@@ -275,17 +291,13 @@ if __name__ == '__main__':
         
             transitions_by_left.get(ts.first_state).update({t: ts.second_state})
 
-    for i in transitions_by_left:
-        print(i, "|||", transitions_by_left[i])
-    print(transitions_by_left)
-    print(symbols)
     for state_1 in dka.states:
-        print("State", state_1)
         for symbol in symbols:
             if transitions_by_left.get(state_1) == None or transitions_by_left.get(state_1).get(symbol) == None:
-                print(symbol)
                 dka.add_transition(state_1, "(None)", symbol)
+    
 
+    
     transitions_by_left = dict()
 
     for ts in dka.transitions:
@@ -294,7 +306,7 @@ if __name__ == '__main__':
                 transitions_by_left.update({ts.first_state: dict()})
         
             transitions_by_left.get(ts.first_state).update({t: ts.second_state})
-    #print(dka)
+   
     dka.transitions = dict(sorted(dka.transitions.items(), key=lambda x: x[0].first_state))
 
     states = dka.states
@@ -326,8 +338,13 @@ if __name__ == '__main__':
                             check_index_1 = [index for index in range(len(group_list_a)) if check_1 in group_list_a[index]][0]
                             check_index_2 = [index for index in range(len(group_list_a)) if check_2 in group_list_a[index]][0]
 
+                            if group_list_a[check_index_1][0] == "(None)" and group_list_a[check_index_2][0] == "(None)":
+                                is_same = False
+                                break
+
                             if check_index_1 != check_index_2:
                                 is_same = False
+                                break
                         
                         if is_same:
                             for item in new_list:
@@ -348,14 +365,9 @@ if __name__ == '__main__':
             group_list_a = new_list
         print(group_list_a)
 
-
     accept_set = states.copy()
     accept_set.remove("(None)")
     group_list = list()
     group_list.extend([accept_set, ["(None)"]])
     
     min_dka(group_list)
-
-
-
-    print(states)

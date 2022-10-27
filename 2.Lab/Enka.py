@@ -6,7 +6,6 @@ class Enka:
         self.state_count = 0
         self.states = list()
         self.transitions = dict()
-        self.lr1_sets = dict()
 
     def __str__(self):
         states = 'Stanja: \n'
@@ -25,7 +24,15 @@ class Enka:
         return self.states[-1]
 
     def add_epsilon_transition(self, left_state, right_state):
+        if left_state not in self.states:
+            raise Exception('Left state doesn\'t exist.')
+        if right_state not in self.states:
+            raise Exception('Right state doesn\'t exist.')
         self.transitions.update({StatePair(left_state, right_state): 'epsilon'})
 
     def add_transition(self, left_state, right_state, character):
+        if left_state not in self.states:
+            raise Exception('Left state doesn\'t exist.')
+        if right_state not in self.states:
+            raise Exception('Right state doesn\'t exist.')
         self.transitions.update({StatePair(left_state, right_state): character})
