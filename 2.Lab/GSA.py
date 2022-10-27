@@ -1,3 +1,4 @@
+from sre_parse import State
 from sys import stdin
 import re
 from turtle import dot
@@ -246,21 +247,115 @@ if __name__ == '__main__':
 
         for current_state in states:
             for symbol in symbols:
-                new_state = ",".join(sorted(set([transition.second_state for transition in transitions if transition.first_state in current_state.split(",") and transitions[transition] == symbol])))
+                new_state = ",".join(sorted(set([transition.second_state for transition in transitions if transition.first_state in current_state.split(",") and symbol in transitions[transition]])))
 
                 if new_state:
                     if new_state not in dka.states:
                         dka.create_state(new_state)
                         nka_to_dka([new_state])
                     dka.add_transition(current_state, new_state, symbol)
-                   
+
     dka = Dka()
     dka.lr1_sets = enka.lr1_sets
-
+    
     transitions = nka.transitions
 
     for state_with_transition in states:
         if state_with_transition not in dka.states:
             dka.create_state(state_with_transition)
         nka_to_dka([state_with_transition])
+    
+    dka.create_state("(None)")
+    transitions_by_left = dict()
+
+    for ts in dka.transitions:
+        for t in dka.transitions[ts]:
+            if transitions_by_left.get(ts.first_state) == None:
+                transitions_by_left.update({ts.first_state: dict()})
+        
+            transitions_by_left.get(ts.first_state).update({t: ts.second_state})
+
+    for i in transitions_by_left:
+        print(i, "|||", transitions_by_left[i])
+    print(transitions_by_left)
+    print(symbols)
+    for state_1 in dka.states:
+        print("State", state_1)
+        for symbol in symbols:
+            if transitions_by_left.get(state_1) == None or transitions_by_left.get(state_1).get(symbol) == None:
+                print(symbol)
+                dka.add_transition(state_1, "(None)", symbol)
+
+    transitions_by_left = dict()
+
+    for ts in dka.transitions:
+        for t in dka.transitions[ts]:
+            if transitions_by_left.get(ts.first_state) == None:
+                transitions_by_left.update({ts.first_state: dict()})
+        
+            transitions_by_left.get(ts.first_state).update({t: ts.second_state})
+    #print(dka)
+    dka.transitions = dict(sorted(dka.transitions.items(), key=lambda x: x[0].first_state))
+
+    states = dka.states
+    transitions = dka.transitions
+
+    dka_min = Dka()
     print(dka)
+
+    def min_dka(group_list_a):
+        
+        is_changed = True
+
+        while is_changed:
+            is_changed = False
+            new_list = list()
+
+            for group in group_list_a:
+                for index_1 in range(len(group) - 1):
+                    if group[index_1] not in [elem for item in new_list for elem in item]:
+                        new_list.append([group[index_1]])
+
+                    for index_2 in range(index_1 + 1, len(group)):
+                        is_same = True
+
+                        for symbol in symbols:
+                            check_1 = transitions_by_left.get(group[index_1]).get(symbol)
+                            check_2 = transitions_by_left.get(group[index_2]).get(symbol)
+
+                            check_index_1 = [index for index in range(len(group_list_a)) if check_1 in group_list_a[index]][0]
+                            check_index_2 = [index for index in range(len(group_list_a)) if check_2 in group_list_a[index]][0]
+
+                            if check_index_1 != check_index_2:
+                                is_same = False
+                        
+                        if is_same:
+                            for item in new_list:
+                                if group[index_1] in item and group[index_2] not in item:
+                                    item.append(group[index_2])
+
+                if group[-1] not in [elem for item in new_list for elem in item]:
+                    new_list.append([group[-1]])
+            # print("GROUP")
+            # for i in group_list_a:
+            #     print(i)
+            print("---------------------")
+            print("NEW")
+            for i in new_list:
+                print(i)
+            if len(group_list_a) != len(new_list):
+                is_changed = True
+            group_list_a = new_list
+        print(group_list_a)
+
+
+    accept_set = states.copy()
+    accept_set.remove("(None)")
+    group_list = list()
+    group_list.extend([accept_set, ["(None)"]])
+    
+    min_dka(group_list)
+
+
+
+    print(states)
