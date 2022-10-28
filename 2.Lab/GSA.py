@@ -270,14 +270,10 @@ if __name__ == '__main__':
     final_chars.append("#")
     print(nonfinal_chars)
     print(final_chars)
+    print(dka)
     print("\n\n\n")
 
     transitions_by_left = dict()
-
-    #dka = dka
-
-    #print(dka)
-    print(dka.state_count)
     for ts in dka.transitions:
         for t in dka.transitions[ts]:
             if transitions_by_left.get(ts.first_state) == None:
@@ -290,18 +286,17 @@ if __name__ == '__main__':
 
     for table_state in range(dka.state_count):
         for char in final_chars + nonfinal_chars:
+            if char == "OPERAND":
+                print("OPERAND")
             move_list = list()
             reduce_list = list()
 
             for state in states[table_state].split("#$#"):
-                if state == "q0" or state == "(None)":
-                    continue
-
                 state, lr1 = state.split(";")
                 state, lr1 = state.strip(), lr1.replace("{", "").replace("}", "").replace("'", "").strip()
 
                 dot_index = state.find(".")
-                if char in final_chars and dot_index != len(state) - 1 and state[dot_index + 1] in final_chars:
+                if char in final_chars and dot_index != len(state) - 1 and state[dot_index + 1:].split()[0] in final_chars:
                     if transitions_by_left.get(states[table_state]):
                         new_state = transitions_by_left.get(states[table_state]).get(char)
 
@@ -314,7 +309,7 @@ if __name__ == '__main__':
                         if len(state.split("->")[1]) == 0:
                             state += "epsilon"
                         reduce_list.append([table_state, char, f"Reduciraj({state})"])
-                elif state == f"<%>->{nonfinal_chars[0]}*" and lr1 == "#":
+                elif state == f"<%>->{nonfinal_chars[0]}." and lr1 == "#":
                     table.put(table_state, "#", "Prihvati()")
                     break
                 elif char in nonfinal_chars:
@@ -337,6 +332,8 @@ if __name__ == '__main__':
                             table.put(*reduce_list[reduce_list.index(production)])
                 else:
                     table.put(*reduce_list[0])
+            print("MOVE",move_list)
+            print("REDUCE", reduce_list)
 
 
     print(table.df)
