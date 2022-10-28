@@ -1,5 +1,6 @@
 from sys import stdin
 import re
+import time
 
 #import numpy as np
 #from json import dump
@@ -12,7 +13,7 @@ from Table import Table
 
 
 if __name__ == '__main__':
-
+    start = time.time()
     #Parsing input data
     nonfinal = input().strip()
     nonfinal_chars = nonfinal.split(" ")[1:]
@@ -274,8 +275,12 @@ if __name__ == '__main__':
 
     dka = Dka()
     dka.create_state("#$#".join(start_goto))
-
+    end = time.time()
+    print(end - start)
+    start = time.time()
     build_dka(["#$#".join(start_goto)])
+    end = time.time()
+    print(end - start)
 
     #print(dka)
     #brisati <%> stanje ?
@@ -290,6 +295,7 @@ if __name__ == '__main__':
     #print(dka)
     #print("\n\n\n")
 
+    start = time.time()
     table = Table(dka.state_count, final_chars + nonfinal_chars)
     states = dka.states
     transitions = dka.transitions
@@ -345,4 +351,6 @@ if __name__ == '__main__':
 
 
     print(table.df)
+    end = time.time()
+    print(end - start)
     #print()
