@@ -198,7 +198,7 @@ if __name__ == '__main__':
                             enka.add_epsilon_transition(parent_transition, lr1_unit)
 
     create_enka(enka, lr0_units, enka.states[-1])
-    print(enka)
+    #print(enka)
     #print(enka.state_count)
     #print(len(enka.transitions))
     #print(lr0_units)
@@ -208,12 +208,12 @@ if __name__ == '__main__':
 
         while stack:
             state_t = stack.pop()
-
-            for state_v in [state_v for state_v in states if transitions.get(StatePair(state_t, state_v)) == "epsilon"]:
-                if state_v not in epsilon_closure:
-                    epsilon_closure.append(state_v)
-                    if state_v not in stack:
-                        stack.append(state_v)
+            if transitions.get(state_t) and transitions.get(state_t).get("epsilon"):
+                for state_v in transitions.get(state_t).get("epsilon"):
+                    if state_v not in epsilon_closure:
+                        epsilon_closure.append(state_v)
+                        if state_v not in stack:
+                            stack.append(state_v)
 
         return list(sorted(set(epsilon_closure)))
 
@@ -221,7 +221,9 @@ if __name__ == '__main__':
         new = []
 
         for state in states:
-            new_state = list(sorted(set([transition.second_state for transition in transitions if transition.first_state == state and transitions[transition] == symbol])))
+            new_state = None
+            if transitions.get(state):
+                new_state = transitions.get(state).get(symbol)
 
             if new_state:
                 new.extend(new_state)
@@ -248,8 +250,17 @@ if __name__ == '__main__':
         for state in added:
             build_dka([state])
 
+    transitions = dict()
+    for transition in enka.transitions:
+        if transitions.get(transition.first_state) == None:
+            transitions.update({transition.first_state: dict()})
+
+        if transitions.get(transition.first_state).get(enka.transitions[transition]) == None:
+            transitions.get(transition.first_state).update({enka.transitions[transition]: list()})
+
+        transitions.get(transition.first_state).get(enka.transitions[transition]).append(transition.second_state)
+
     states = enka.states
-    transitions = enka.transitions
     symbols = nonfinal_chars[1:] + final_chars
 
     start_goto = get_epsilon_closure([states[0]])
@@ -268,26 +279,17 @@ if __name__ == '__main__':
 
     nonfinal_chars = nonfinal_chars[1:]
     final_chars.append("#")
-    print(nonfinal_chars)
-    print(final_chars)
-    print(dka)
-    print("\n\n\n")
-
-    transitions_by_left = dict()
-    for ts in dka.transitions:
-        for t in dka.transitions[ts]:
-            if transitions_by_left.get(ts.first_state) == None:
-                transitions_by_left.update({ts.first_state: dict()})
-        
-            transitions_by_left.get(ts.first_state).update({t: ts.second_state})
+    #print(nonfinal_chars)
+    #print(final_chars)
+    #print(dka)
+    #print("\n\n\n")
 
     table = Table(dka.state_count, final_chars + nonfinal_chars)
     states = dka.states
+    transitions = dka.transitions
 
     for table_state in range(dka.state_count):
         for char in final_chars + nonfinal_chars:
-            if char == "OPERAND":
-                print("OPERAND")
             move_list = list()
             reduce_list = list()
 
@@ -297,8 +299,8 @@ if __name__ == '__main__':
 
                 dot_index = state.find(".")
                 if char in final_chars and dot_index != len(state) - 1 and state[dot_index + 1:].split()[0] in final_chars:
-                    if transitions_by_left.get(states[table_state]):
-                        new_state = transitions_by_left.get(states[table_state]).get(char)
+                    if transitions.get(states[table_state]):
+                        new_state = transitions.get(states[table_state]).get(char)
 
                         if new_state:
                             index = states.index(new_state)
@@ -313,8 +315,8 @@ if __name__ == '__main__':
                     table.put(table_state, "#", "Prihvati()")
                     break
                 elif char in nonfinal_chars:
-                    if transitions_by_left.get(states[table_state]):
-                        new_state = transitions_by_left.get(states[table_state]).get(char)
+                    if transitions.get(states[table_state]):
+                        new_state = transitions.get(states[table_state]).get(char)
 
                         if new_state:
                             index = states.index(new_state)
@@ -332,9 +334,9 @@ if __name__ == '__main__':
                             table.put(*reduce_list[reduce_list.index(production)])
                 else:
                     table.put(*reduce_list[0])
-            print("MOVE",move_list)
-            print("REDUCE", reduce_list)
+            #print("MOVE",move_list)
+            #print("REDUCE", reduce_list)
 
 
     print(table.df)
-    print()
+    #print()

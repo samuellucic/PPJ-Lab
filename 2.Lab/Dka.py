@@ -29,7 +29,7 @@ class Dka:
         if right_state not in self.states:
             raise Exception('Right state doesn\'t exist.')
         
-        if self.transitions.get(StatePair(left_state, right_state)) == None:
-            self.transitions.update({StatePair(left_state, right_state): list()})
+        if self.transitions.get(left_state) == None:
+            self.transitions.update({left_state: dict()})
         
-        self.transitions.get(StatePair(left_state, right_state)).append(character)
+        self.transitions.get(left_state).update({character: right_state})
