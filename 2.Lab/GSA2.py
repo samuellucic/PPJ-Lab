@@ -72,13 +72,18 @@ if __name__ == '__main__':
 
     #print(np.matrix(starts_with))
 
+    changed = True
+
     #Calculate startsWith table
-    for i in range(nonfinal_cnt):
-        for j in range(no_of_chars):
-            if starts_with[i][j] == 1 and i != j:
-                for k in range(no_of_chars):
-                    if starts_with[j][k] == 1:
-                        starts_with[i][k] = 1
+    while(changed):
+        changed = False
+        for i in range(nonfinal_cnt):
+            for j in range(no_of_chars):
+                if starts_with[i][j] == 1 and i != j:
+                    for k in range(no_of_chars):
+                        if starts_with[j][k] == 1 and starts_with[i][k] != 1:
+                            starts_with[i][k] = 1
+                            changed = True
 
     #print(np.matrix(starts_with))
 
@@ -98,7 +103,14 @@ if __name__ == '__main__':
 
     for char in final_chars:
         startsWithDict[char] = [char]
-    #print(startsWithDict)
+        
+    #print(nonfinal_chars.index('<vanjska_deklaracija>'))
+    #for i in range(no_of_chars):
+    #    if starts_with[nonfinal_chars.index('<vanjska_deklaracija>')][i] == 1:
+    #        if (i >= nonfinal_cnt):
+    #            print(final_chars[i - nonfinal_cnt])
+    #        else:
+    #            print(nonfinal_chars[i])
 
     #Calculate lr0 units
     lr0_units = list()
