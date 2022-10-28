@@ -108,7 +108,9 @@ if __name__ == '__main__':
 
     for char in final_chars:
         startsWithDict[char] = [char]
-    #print(startsWithDict)
+    #for key in startsWithDict:
+    #    print(f"Kljuc: {key}")
+    #    print(f"Vrijednosti: {startsWithDict[key]}")
 
     #Calculate lr0 units
     lr0_units = list()
