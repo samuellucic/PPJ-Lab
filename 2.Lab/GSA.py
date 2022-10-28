@@ -77,6 +77,8 @@ if __name__ == '__main__':
 
     #print(np.matrix(starts_with))
 
+    changed = True
+
     #Calculate startsWith table
     while(changed):
         changed = False
