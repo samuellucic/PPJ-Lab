@@ -230,7 +230,6 @@ if __name__ == '__main__':
 
         return get_epsilon_closure(new)
 
-
     def build_dka(states):
         added = []
 
