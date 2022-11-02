@@ -9,12 +9,9 @@ class Node:
         if not self.children:
             self.children = list()
         self.children.append(child)
-
-    def add_parent(self, parent):
-        self.parent = parent
+        child.parent = self
 
     def __str__(self, depth):
-        # for i in self.children:
         output = self.data.__str__()
 
         if self.children:
@@ -24,5 +21,3 @@ class Node:
                 output += "\n" + " " * (depth + 1) + child.__str__(depth + 1)
         
         return output
-    # def __str__(self):
-    #     return self.data.uniform

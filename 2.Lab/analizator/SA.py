@@ -14,14 +14,12 @@ if __name__ == '__main__':
     stack.append(0)
 
     root_node = None
-    #node_list = list()
     index = 0
     lines = list(map(lambda x: x.strip(), stdin.readlines()))
     lines.append("#")
 
     while(index < len(lines)):
         data = Data(line=lines[index]) if lines[index] != "#" else Data(uniform=lines[index])
-        #node_list.append(node)
 
         state = stack[-1]
         cmd = df_tablica.at[state, data.uniform]
@@ -43,13 +41,10 @@ if __name__ == '__main__':
             if "epsilon" in right_side:
                 eps_node = Node(data=Data(uniform="$"))
                 node.add_child(eps_node)
-                eps_node.add_parent(node)
             else:
-                #children = list()
                 for char in right_side:
                     stack.pop()
                     child_node = stack.pop()
-                    # print("CHILD NODE", child_node)
                     if child_node.data.uniform != char:
                         #error handling
                         #to do later
@@ -57,8 +52,6 @@ if __name__ == '__main__':
                         pass
                     
                     node.add_child(child_node)
-                    child_node.add_parent(node)
-                    #print(child_node.parent)
                     
             state = stack[-1]
             cmd = df_tablica.at[state, left_side]
@@ -70,12 +63,10 @@ if __name__ == '__main__':
             stack.pop()
             root_node = stack.pop()
             break
-        # print("NOVI", node)
         # print(stack)
         # for i in stack:
         #     print(i.__str__(), end=", ")
         # print(),
         #print(cmd)
         #print(node.__str__())
-    #print(node_list)
     print(root_node.__str__(0))
