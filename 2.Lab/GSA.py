@@ -8,7 +8,6 @@ import pickle
 
 from Enka import Enka
 from Grammar import Grammar
-from State import StatePair
 from Dka import Dka
 from Table import Table
 
@@ -141,6 +140,7 @@ if __name__ == '__main__':
 
     def create_enka(enka, lr0_units, parent_transition):
         #Find next character
+        #print(parent_transition)
         parent_transition_new, parent_set = parent_transition.split(' ; ')
         dot_index = parent_transition_new.find('.')
         leftover_string = parent_transition_new[dot_index + 1:]
@@ -162,7 +162,7 @@ if __name__ == '__main__':
         else:
             final_transition = parent_transition_new[:dot_index] + ' ' + leftover_string
         #print(final_transition)
-        
+    
         if next_char in grammar.nonfinal_chars or next_char in grammar.final_chars:
             lr1_unit = final_transition + ' ; ' + parent_set
             #print(lr1_unit)          
@@ -196,9 +196,11 @@ if __name__ == '__main__':
                             if char not in empty_chars:
                                 break
                         if not foundNonEmpty:
-                            additional_chars = additional_chars.union(set(parent_set[1:-1].split(',')))
+                            additional_chars = additional_chars.union(set(parent_set[1:-1].replace("'", "").split(',')))
+                        #print(parent_set)
                         
                         lr1_unit = unit + ' ; ' + str(additional_chars).replace(' ', '')
+                        #print("JEDINICA __________________ " + lr1_unit)
                         if lr1_unit not in enka.states:
                             enka.create_state(lr1_unit)
                             enka.add_epsilon_transition(parent_transition, lr1_unit)
@@ -208,8 +210,8 @@ if __name__ == '__main__':
 
     create_enka(enka, lr0_units, enka.states[-1])
     #print(enka)
-    #print(enka.state_count)
-    #print(len(enka.transitions))
+    print(enka.state_count)
+    print(len(enka.transitions))
     #print(lr0_units)
 
     def get_epsilon_closure(stack: list) -> list:
@@ -284,11 +286,7 @@ if __name__ == '__main__':
     print(end - start)
 
     #print(dka)
-    #brisati <%> stanje ?
-    #zasada hardkodirano
-    #dka.states.remove("<%>-><S>. ; {#}")
-    #dka.state_count -= 1
-
+    
     nonfinal_chars = nonfinal_chars[1:]
     final_chars.append("#")
     #print(nonfinal_chars)
@@ -297,7 +295,7 @@ if __name__ == '__main__':
     #print("\n\n\n")
 
     start = time.time()
-    table = Table(dka.state_count, final_chars + nonfinal_chars)
+    table = Table(dka.state_count, final_chars + nonfinal_chars, syn_chars)
     states = dka.states
     transitions = dka.transitions
 
@@ -311,7 +309,10 @@ if __name__ == '__main__':
                 state, lr1 = state.strip(), lr1.replace("{", "").replace("}", "").replace("'", "").strip()
 
                 dot_index = state.find(".")
-                if char in final_chars and dot_index != len(state) - 1 and state[dot_index + 1:].split()[0] in final_chars:
+                if char == "#" and state == f"<%>->{nonfinal_chars[0]}." and lr1 == "#":
+                    table.put(table_state, "#", "Prihvati()")
+                    break
+                elif char in final_chars and dot_index != len(state) - 1 and state[dot_index + 1:].split()[0] in final_chars:
                     if transitions.get(states[table_state]):
                         new_state = transitions.get(states[table_state]).get(char)
 
@@ -320,13 +321,11 @@ if __name__ == '__main__':
                             move_list.append([table_state, char, f"Pomakni({index})"])
                 elif char in final_chars and dot_index == len(state) - 1:
                     if char in lr1.split(","):
-                        state = state.replace('.', '')
+                        state = state.replace('.', ' ')
+                        state = state.split("->")[0] + "->" + state.split("->")[1].strip()
                         if len(state.split("->")[1]) == 0:
                             state += "epsilon"
                         reduce_list.append([table_state, char, f"Reduciraj({state})"])
-                elif state == f"<%>->{nonfinal_chars[0]}." and lr1 == "#":
-                    table.put(table_state, "#", "Prihvati()")
-                    break
                 elif char in nonfinal_chars:
                     if transitions.get(states[table_state]):
                         new_state = transitions.get(states[table_state]).get(char)
@@ -336,22 +335,26 @@ if __name__ == '__main__':
                             table.put(table_state, char, f"Stavi({index})")
                             break
 
+                        
             if move_list:
                 table.put(*move_list[0])
             elif reduce_list:
                 if len(reduce_list) > 1:
-                    for production in productions_input:
-                        #production = production.replace(" ", "")
+                    lr0_units = list(map(lambda x: x.replace(".", " "), lr0_units))
+                    lr0_units = list(map(lambda x: x.split("->")[0] + "->" + x.split("->")[1].strip(), lr0_units))
+                    productions = list(map(lambda x: x[2].replace("Reduciraj", "").replace("(", "").replace(")", ""), reduce_list))
 
-                        if " " != production[0] and production in list(map(lambda x: x[2].replace("Reduciraj", "").replace("(", "").replace(")", ""), reduce_list)):
-                            table.put(*reduce_list[reduce_list.index(production)])
+                    for production in lr0_units:
+                        #production = production.strip()
+
+                        if production in productions:
+                            table.put(*reduce_list[productions.index(production)])
+                            break
                 else:
                     table.put(*reduce_list[0])
-            #print("MOVE",move_list)
-            #print("REDUCE", reduce_list)
 
     with open(r"./analizator/tablica.json", "wb") as file:
-        pickle.dump(table.df, file)
+        pickle.dump(table, file)
     
     end = time.time()
     print(end - start)

@@ -11,6 +11,9 @@ class Node:
         self.children.append(child)
         child.parent = self
 
+    def del_child(self, child):
+        self.children.remove(child)
+
     def __str__(self, depth):
         output = self.data.__str__()
 

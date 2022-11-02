@@ -1,5 +1,4 @@
-from sys import stdin
-import pandas as pd
+from sys import stdin, stderr
 import pickle
 
 from Data import Data
@@ -8,8 +7,11 @@ from Node import Node
 
 if __name__ == '__main__':
     with open("tablica.json", "rb") as file:
-        df_tablica = pickle.load(file)
+        table = pickle.load(file)
 
+    df_table = table.df
+    sync = table.sync
+    
     stack = list()
     stack.append(0)
 
@@ -20,9 +22,9 @@ if __name__ == '__main__':
 
     while(index < len(lines)):
         data = Data(line=lines[index]) if lines[index] != "#" else Data(uniform=lines[index])
-
         state = stack[-1]
-        cmd = df_tablica.at[state, data.uniform]
+        cmd = str(df_table.at[state, data.uniform])
+    
         if "Pomakni" in cmd:
             node = Node(data=data)
 
@@ -45,28 +47,39 @@ if __name__ == '__main__':
                 for char in right_side:
                     stack.pop()
                     child_node = stack.pop()
-                    if child_node.data.uniform != char:
-                        #error handling
-                        #to do later
-                        #
-                        pass
+                    # if child_node.data.uniform != char:
+                    #     #error handling
+                    #     #to do later
+                    #     #
+                    #     pass
                     
                     node.add_child(child_node)
                     
             state = stack[-1]
-            cmd = df_tablica.at[state, left_side]
-
+            cmd = str(df_table.at[state, left_side])
             next_state = int((cmd.split("(")[1])[0:-1])
+
             stack.append(node)
             stack.append(next_state)
         elif "Prihvati" in cmd:
             stack.pop()
             root_node = stack.pop()
             break
+        elif "nan" in cmd:
+            row_error = "Pogreška u redu " + str(data.row)
+            expected_uniform = "Očekivani znakovi " + " ".join(list(df_table.loc[state].dropna().index))
+            stderr.write(row_error + "\n" + expected_uniform + "\n" + data.__str__() + "\n")
+            
+            while index < len(lines) - 1 and data.uniform not in sync:
+                data = Data(line=lines[index]) if lines[index] != "#" else Data(uniform=lines[index])
+                index += 1
+            
+            while cmd == "nan" and len(stack) > 1:
+                cmd = str(df_table.at[state, data.uniform])
+                stack.pop()
+                node = stack.pop()
+                state = stack[-1]
+            
         # print(stack)
-        # for i in stack:
-        #     print(i.__str__(), end=", ")
-        # print(),
-        #print(cmd)
         #print(node.__str__())
     print(root_node.__str__(0))
