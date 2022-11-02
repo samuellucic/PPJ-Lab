@@ -1,6 +1,7 @@
 from sys import stdin
 import re
 import time
+import pickle
 
 #import numpy as np
 #from json import dump
@@ -319,7 +320,7 @@ if __name__ == '__main__':
                             move_list.append([table_state, char, f"Pomakni({index})"])
                 elif char in final_chars and dot_index == len(state) - 1:
                     if char in lr1.split(","):
-                        state = state.replace('.', '').replace(' ', '')
+                        state = state.replace('.', '')
                         if len(state.split("->")[1]) == 0:
                             state += "epsilon"
                         reduce_list.append([table_state, char, f"Reduciraj({state})"])
@@ -340,7 +341,7 @@ if __name__ == '__main__':
             elif reduce_list:
                 if len(reduce_list) > 1:
                     for production in productions_input:
-                        production = production.replace(" ", "")
+                        #production = production.replace(" ", "")
 
                         if " " != production[0] and production in list(map(lambda x: x[2].replace("Reduciraj", "").replace("(", "").replace(")", ""), reduce_list)):
                             table.put(*reduce_list[reduce_list.index(production)])
@@ -349,8 +350,9 @@ if __name__ == '__main__':
             #print("MOVE",move_list)
             #print("REDUCE", reduce_list)
 
-
-    print(table.df)
+    with open(r"./analizator/tablica.json", "wb") as file:
+        pickle.dump(table.df, file)
+    
     end = time.time()
     print(end - start)
     #print()
