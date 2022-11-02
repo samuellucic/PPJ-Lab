@@ -1,8 +1,0 @@
-%V <S> <C>
-%T c d
-%Syn c
-<S>
- <C> <C>
-<C>
- c <C>
- d

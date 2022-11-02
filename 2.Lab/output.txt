@@ -37,3 +37,21 @@ FC: no differences encountered
 Comparing files OUTPUTS\23ppjC_4.out and TESTS\23PPJC_4\TEST.OUT
 FC: no differences encountered
 
+Comparing files OUTPUTS\int1.out and TESTS\INT1\TEST.OUT
+FC: no differences encountered
+
+Comparing files OUTPUTS\int2.out and TESTS\INT2\TEST.OUT
+FC: no differences encountered
+
+Comparing files OUTPUTS\int3.out and TESTS\INT3\TEST.OUT
+FC: no differences encountered
+
+Comparing files OUTPUTS\int4.out and TESTS\INT4\TEST.OUT
+FC: no differences encountered
+
+Comparing files OUTPUTS\int5.out and TESTS\INT5\TEST.OUT
+FC: no differences encountered
+
+Comparing files OUTPUTS\int6.out and TESTS\INT6\TEST.OUT
+FC: no differences encountered
+
