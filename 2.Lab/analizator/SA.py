@@ -75,10 +75,10 @@ if __name__ == '__main__':
                 index += 1
             
             while cmd == "nan" and len(stack) > 1:
-                cmd = str(df_table.at[state, data.uniform])
                 stack.pop()
                 node = stack.pop()
                 state = stack[-1]
+                cmd = str(df_table.at[state, data.uniform])
             
         # print(stack)
         #print(node.__str__())
