@@ -72,14 +72,17 @@ if __name__ == '__main__':
             
             while index < len(lines) - 1 and data.uniform not in sync:
                 data = Data(line=lines[index]) if lines[index] != "#" else Data(uniform=lines[index])
-                index += 1
+                if data.uniform not in sync:
+                    index += 1
             
+            cmd = str(df_table.at[state, data.uniform])
+
             while cmd == "nan" and len(stack) > 1:
                 stack.pop()
                 node = stack.pop()
                 state = stack[-1]
                 cmd = str(df_table.at[state, data.uniform])
             
-        # print(stack)
+        #print(stack)
         #print(node.__str__())
     print(root_node.__str__(0))

@@ -299,12 +299,45 @@ if __name__ == '__main__':
     states = dka.states
     transitions = dka.transitions
 
+    def find_only_available_uniform(state):
+        uniform_list = list()
+
+        uniform_list.extend(
+            state.split(";")[0]
+                    .split("->")[1]
+                    .replace(".", " ")
+                    .split(), 
+        )
+        uniform_list.extend(
+            state.split(";")[1]
+                    .replace("{", "")
+                    .replace("}", "")
+                    .replace("'", "")
+                    .strip()
+                    .split(",")
+        )
+        
+        return uniform_list
+
     for table_state in range(dka.state_count):
+        state_set = states[table_state].split("#$#")
+        state_chars = list(
+            map(
+                lambda state: find_only_available_uniform(state),
+                state_set
+            )
+        )
+        state_chars = list(set([char.strip() for chars in state_chars for char in chars]))
+        state_chars.append("#")
+
         for char in final_chars + nonfinal_chars:
+            if char not in state_chars:
+               continue
+
             move_list = list()
             reduce_list = list()
 
-            for state in states[table_state].split("#$#"):
+            for state in state_set:
                 state, lr1 = state.split(";")
                 state, lr1 = state.strip(), lr1.replace("{", "").replace("}", "").replace("'", "").strip()
 
@@ -355,7 +388,7 @@ if __name__ == '__main__':
 
     with open(r"./analizator/tablica.json", "wb") as file:
         pickle.dump(table, file)
-    
+    #print(table.df.to_string())
     end = time.time()
     print(end - start)
     #print()

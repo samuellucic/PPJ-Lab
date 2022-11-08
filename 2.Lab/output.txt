@@ -4,22 +4,43 @@ FC: no differences encountered
 Comparing files OUTPUTS\01aab_2.out and TESTS\01AAB_2\TEST.OUT
 FC: no differences encountered
 
+Comparing files OUTPUTS\02aab_3.out and TESTS\02AAB_3\TEST.OUT
+FC: no differences encountered
+
 Comparing files OUTPUTS\03gram100_1.out and TESTS\03GRAM100_1\TEST.OUT
+FC: no differences encountered
+
+Comparing files OUTPUTS\04gram100_2.out and TESTS\04GRAM100_2\TEST.OUT
 FC: no differences encountered
 
 Comparing files OUTPUTS\05gram100_3.out and TESTS\05GRAM100_3\TEST.OUT
 FC: no differences encountered
 
+Comparing files OUTPUTS\06oporavak1.out and TESTS\06OPORAVAK1\TEST.OUT
+FC: no differences encountered
+
 Comparing files OUTPUTS\07oporavak2.out and TESTS\07OPORAVAK2\TEST.OUT
+FC: no differences encountered
+
+Comparing files OUTPUTS\08pomred.out and TESTS\08POMRED\TEST.OUT
 FC: no differences encountered
 
 Comparing files OUTPUTS\09redred.out and TESTS\09REDRED\TEST.OUT
 FC: no differences encountered
 
+Comparing files OUTPUTS\10minusLang_1.out and TESTS\10MINUSLANG_1\TEST.OUT
+FC: no differences encountered
+
 Comparing files OUTPUTS\11minusLang_2.out and TESTS\11MINUSLANG_2\TEST.OUT
 FC: no differences encountered
 
+Comparing files OUTPUTS\12ppjC.out and TESTS\12PPJC\TEST.OUT
+FC: no differences encountered
+
 Comparing files OUTPUTS\13ppjLang.out and TESTS\13PPJLANG\TEST.OUT
+FC: no differences encountered
+
+Comparing files OUTPUTS\14simplePpjLang.out and TESTS\14SIMPLEPPJLANG\TEST.OUT
 FC: no differences encountered
 
 Comparing files OUTPUTS\15jed.out and TESTS\15JED\TEST.OUT
