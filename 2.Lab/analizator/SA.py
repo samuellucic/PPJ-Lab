@@ -9,7 +9,6 @@ if __name__ == '__main__':
     with open("tablica.json", "rb") as file:
         table = pickle.load(file)
 
-    df_table = table.df
     sync = table.sync
     
     stack = list()
@@ -23,7 +22,7 @@ if __name__ == '__main__':
     while(index < len(lines)):
         data = Data(line=lines[index]) if lines[index] != "#" else Data(uniform=lines[index])
         state = stack[-1]
-        cmd = str(df_table.at[state, data.uniform])
+        cmd = str(table.get(state, data.uniform))
     
         if "Pomakni" in cmd:
             node = Node(data=data)
@@ -56,7 +55,7 @@ if __name__ == '__main__':
                     node.add_child(child_node)
                     
             state = stack[-1]
-            cmd = str(df_table.at[state, left_side])
+            cmd = str(table.get(state, left_side))
             next_state = int((cmd.split("(")[1])[0:-1])
 
             stack.append(node)
@@ -67,7 +66,7 @@ if __name__ == '__main__':
             break
         elif "nan" in cmd:
             row_error = "Pogreška u redu " + str(data.row)
-            expected_uniform = "Očekivani znakovi " + " ".join(list(df_table.loc[state].dropna().index))
+            expected_uniform = "Očekivani znakovi " + " ".join(list(filter(lambda x: table.getRow(state)[x] != "nan", table.getRow(state))))
             stderr.write(row_error + "\n" + expected_uniform + "\n" + data.__str__() + "\n")
             
             while index < len(lines) - 1 and data.uniform not in sync:
@@ -75,13 +74,13 @@ if __name__ == '__main__':
                 if data.uniform not in sync:
                     index += 1
             
-            cmd = str(df_table.at[state, data.uniform])
+            cmd = str(table.get(state, data.uniform))
 
             while cmd == "nan" and len(stack) > 1:
                 stack.pop()
                 node = stack.pop()
                 state = stack[-1]
-                cmd = str(df_table.at[state, data.uniform])
+                cmd = str(table.get(state, data.uniform))
             
         #print(stack)
         #print(node.__str__())

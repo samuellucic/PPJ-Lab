@@ -296,6 +296,7 @@ if __name__ == '__main__':
 
     start = time.time()
     table = Table(dka.state_count, final_chars + nonfinal_chars, syn_chars)
+    
     states = dka.states
     transitions = dka.transitions
 
@@ -388,7 +389,7 @@ if __name__ == '__main__':
 
     with open(r"./analizator/tablica.json", "wb") as file:
         pickle.dump(table, file)
-    #print(table.df.to_string())
+    #print(table.df)
     end = time.time()
     print(end - start)
     #print()
