@@ -349,4 +349,210 @@ def unarni_izraz(node, tablica):
 
 #def unarni_operator(node, tablica) -> u uputama pise da ne treba nista provjeravati
 
+def cast_izraz(node, tablica):
+    prod = node.get_production()
 
+    if prod == "<cast_izraz> ::= <unarni_izraz>":
+        unarni_izraz(node.children[0], tablica)
+
+        node_type_0 = node.children[0].props["type"]
+        l_expr = node.children[0].props["l_expr"]
+        
+        node.props.update({"type": node_type_0, "l_expr": l_expr})
+
+    elif prod == "<cast_izraz> ::= L_ZAGRADA <ime_tipa> D_ZAGRADA <cast_izraz>":
+        #1
+        ime_tipa(node.children[1], tablica)
+        node_type_1 = node.children[1].props["type"]
+
+        if node_type_1 == "void":
+            print(node.get_error())
+            sys.exit()
+
+        #2 
+        cast_izraz(node.children[3], tablica)
+        node_type_3 = node.children[3].props["type"]
+
+        if node_type_3 not in ["int", "char", "const int", "const char"]:
+            print(node.get_error())
+            sys.exit()
+
+        #3 
+        #mislim da je provjeren s #1 i #2
+
+        node.props.update({"type": node_type_1, "l_expr": False})
+
+def ime_tipa(node, tablica):
+    prod = node.get_production()
+
+    if prod == "<ime_tipa> ::= <specifikator_tipa>":
+        specifikator_tipa(node.children[0], tablica)
+
+        node_type_0 = node.children[0].props["type"]
+
+        node.props.update({"type": node_type_0})
+
+    elif prod == "<ime_tipa> ::= KR_CONST <specifikator_tipa>":
+        #1
+        specifikator_tipa(node.children[1], tablica)
+        
+        #2
+        node_type_1 = node.children[1].props["type"]
+
+        if node_type_1 == "void":
+            print(node.get_error())
+            sys.exit()
+
+        tip = "const(" + node_type_1 + ")"
+        node.props.update({"type": tip})
+
+def specifikator_tipa(node, tablica):
+    prod = node.get_production()
+
+    if prod == "<specifikator_tipa> ::= KR_VOID":
+        node.props.update({"type": "void"})
+    
+    elif prod == "<specifikator_tipa> ::= KR_CHAR":
+        node.props.update({"type": "char"})
+
+    elif prod == "<specifikator_tipa> ::= KR_INT":
+        node.props.update({"type": "int"})
+
+def multiplikativni_izraz(node, tablica):
+    prod = node.get_production()
+
+    if prod == "<multiplikativni_izraz> ::= <cast_izraz>":
+        cast_izraz(node.children[0], tablica)
+
+        node_type_0 = node.children[0].props["type"]
+        l_expr = node.children[0].props["l_expr"]
+
+        node.props.update({"type": node_type_0, "l_expr": l_expr})
+
+    elif (prod == "<multiplikativni_izraz> ::= <multiplikativni_izraz> OP_PUTA <cast_izraz>" 
+          or prod == "<multiplikativni_izraz> ::= <multiplikativni_izraz> OP_DIJELI <cast_izraz>" 
+          or prod == "<multiplikativni_izraz> ::= <multiplikativni_izraz> OP_MOD <cast_izraz>"):
+        
+        #1
+        multiplikativni_izraz(node.children[0], tablica)
+
+        #2
+        node_type_0 = node.children[0].props["type"]
+        if node_type_0 not in ["int", "char", "const int", "const char"]:
+            print(node.get_error())
+            sys.exit()
+
+        #3
+        cast_izraz(node.children[2], tablica)
+
+        #4
+        node_type_2 = node.children[2].props["type"]
+        if node_type_2 not in ["int", "char", "const int", "const char"]:
+            print(node.get_error())
+            sys.exit()
+
+        node.props.update({"type": "int", "l_expr": False})
+
+def aditivni_izraz(node, tablica):
+    prod = node.get_production()
+
+    if prod == "<aditivni_izraz> ::= <multiplikativni_izraz>":
+        multiplikativni_izraz(node.children[0], tablica)
+
+        node_type_0 = node.children[0].props["type"]
+        l_expr = node.children[0].props["l_expr"]
+
+        node.props.update({"type": node_type_0, "l_expr": l_expr})
+
+    elif (prod == "<aditivni_izraz> ::= <aditivni_izraz> PLUS <multiplikativni_izraz>" 
+          or prod == "<aditivni_izraz> ::= <aditivni_izraz> MINUS <multiplikativni_izraz>"):
+        
+        #1
+        aditivni_izraz(node.children[0], tablica)
+
+        #2
+        node_type_0 = node.children[0].props["type"]
+        if node_type_0 not in ["int", "char", "const int", "const char"]:
+            print(node.get_error())
+            sys.exit()
+
+        #3
+        multiplikativni_izraz(node.children[2], tablica)
+
+        #4
+        node_type_2 = node.children[2].props["type"]
+        if node_type_2 not in ["int", "char", "const int", "const char"]:
+            print(node.get_error())
+            sys.exit()
+
+        node.props.update({"type": "int", "l_expr": False})
+
+def odnosni_izraz(node, tablica):
+    prod = node.get_production()
+
+    if prod == "<odnosni_izraz> ::= <aditivni_izraz>":
+        aditivni_izraz(node.children[0], tablica)
+
+        node_type_0 = node.children[0].props["type"]
+        l_expr = node.children[0].props["l_expr"]
+
+        node.props.update({"type": node_type_0, "l_expr": l_expr})
+
+    elif (prod == "<odnosni_izraz> ::= <odnosni_izraz> OP_LT <aditivni_izraz>"
+          or prod == "<odnosni_izraz> ::= <odnosni_izraz> OP_GT <aditivni_izraz>"
+          or prod == "<odnosni_izraz> ::= <odnosni_izraz> OP_LTE <aditivni_izraz>"
+          or prod == "<odnosni_izraz> ::= <odnosni_izraz> OP_GTE <aditivni_izraz>"):
+        
+        #1
+        odnosni_izraz(node.children[0], tablica)
+
+        #2
+        node_type_0 = node.children[0].props["type"]
+        if node_type_0 not in ["int", "char", "const int", "const char"]:
+            print(node.get_error())
+            sys.exit()
+
+        #3
+        aditivni_izraz(node.children[2], tablica)
+
+        #4
+        node_type_2 = node.children[2].props["type"]
+        if node_type_2 not in ["int", "char", "const int", "const char"]:
+            print(node.get_error())
+            sys.exit()
+
+        node.props.update({"type": "int", "l_expr": False})
+
+def jednakosni_izraz(node, tablica):
+    prod = node.get_production()
+
+    if prod == "<jednakosni_izraz> ::= <odnosni_izraz>":
+        odnosni_izraz(node.children[0], tablica)
+
+        node_type_0 = node.children[0].props["type"]
+        l_expr = node.children[0].props["l_expr"]
+
+        node.props.update({"type": node_type_0, "l_expr": l_expr})
+
+    elif (prod == "<jednakosni_izraz> ::= <jednakosni_izraz> OP_EQ <odnosni_izraz>"
+          or prod == "<jednakosni_izraz> ::= <jednakosni_izraz> OP_NEQ <odnosni_izraz>"):
+        
+        #1
+        jednakosni_izraz(node.children[0], tablica)
+
+        #2
+        node_type_0 = node.children[0].props["type"]
+        if node_type_0 not in ["int", "char", "const int", "const char"]:
+            print(node.get_error())
+            sys.exit()
+
+        #3
+        odnosni_izraz(node.children[2], tablica)
+
+        #4
+        node_type_2 = node.children[2].props["type"]
+        if node_type_2 not in ["int", "char", "const int", "const char"]:
+            print(node.get_error())
+            sys.exit()
+
+        node.props.update({"type": "int", "l_expr": False})
