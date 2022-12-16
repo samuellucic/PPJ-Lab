@@ -182,3 +182,171 @@ def primarni_izraz(node, table):
 
         node.props.update({"type": node.children[1].props["type"], "l_expr": node.children[1].props["l_expr"]})
 
+def postfiks_izraz(node, table):
+    prod = node.get_production()
+
+    if prod == "<postfiks_izraz> ::= <primarni_izraz>":
+        primarni_izraz(node.children[0], table)
+
+        node.props.update({"type": node.children[0].props["type"], "l_expr": node.children[0].props["l_expr"]})
+
+    elif prod == "<postfiks_izraz> ::= <postfiks_izraz> L_UGL_ZAGRADA <izraz> D_UGL_ZAGRADA":
+        #1
+        postfiks_izraz(node.children[0], table)
+
+        #2
+        node_type_0 = node.children[0].props["type"]
+        if node_type_0 not in ["niz(int)", "niz(char)", "niz(const(int))", "niz(const(char))"]:
+            print(node.get_error())
+            sys.exit()
+        
+        #3
+        izraz(node.children[2], table)
+
+        #4
+        node_type_2 = node.children[2].props["type"]
+        if node_type_2 not in ["int", "char", "const int", "const char"]:
+            print(node.get_error())
+            sys.exit()
+
+        type = node_type_0[4:-1]
+        l_expr = node.children[0].props["l_expr"]
+        node.props.update({"type": type, "l_expr": l_expr})
+
+    elif prod == "<postfiks_izraz> ::= <postfiks_izraz> L_ZAGRADA D_ZAGRADA":
+        #1
+        postfiks_izraz(node.children[0], table)
+
+        #2
+        node_type_0 = node.children[0].props["type"]
+        if node_type_0.split(" -> ")[0] != "funkcija(void":
+            print(node.get_error())
+            sys.exit()
+
+        return_type = node_type_0.split(" -> ")[1]
+        node.props.update({"type": return_type, "l_expr": False})
+
+    elif prod == "<postfiks_izraz> ::= <postfiks_izraz> L_ZAGRADA <lista_argumenata> D_ZAGRADA":
+        #1
+        postfiks_izraz(node.children[0], table)
+
+        #2
+        lista_argumenata(node.children[2], table)
+
+        #3
+        node_type_0 = node.children[0].props["type"]
+        if "funkcija([" not in node_type_0.split(" -> ")[0]:
+            print(node.get_error())
+            sys.exit()
+
+        node_params_0 = node_type_0.split("[")[1].split("]")[0].split(', ')
+        node_args_2 = node.children[2].props["type_list"]
+
+        if len(param) != len(arg):
+            print(node.get_error())
+            sys.exit()
+
+        for param, arg in zip(node_params_0, node_args_2):
+            if (param == "int" or param == "const int"):
+                if arg not in ["int", "char", "const int", "const char"]:
+                    print(node.get_error())
+                    sys.exit()
+            elif (param == "char" or param == "const char"):
+                if arg not in ["char", "const char"]:
+                    print(node.get_error())
+                    sys.exit()
+            elif (param == "niz(int)"):
+                if arg not in ["niz(int)", "niz(char)"]:
+                    print(node.get_error())
+                    sys.exit()
+            elif (param == "niz(char"):
+                if arg not in ["niz(char)"]:
+                    print(node.get_error())
+                    sys.exit()
+            elif (param == "niz(const(int))"):
+                if arg not in ["niz(int)", "niz(const(int))", "niz(char)", "niz(const(char)"]:
+                    print(node.get_error())
+                    sys.exit()
+            elif (param == "niz(const(char))"):
+                if arg not in ["niz(char)", "niz(const(char)"]:
+                    print(node.get_error())
+                    sys.exit()
+            elif "funkcija" in param and param != arg:
+                print(node.get_error())
+                sys.exit()
+
+        node.props.update({"type": return_type, "l_expr": False})
+
+    elif prod == "<postfiks_izraz> ::= <postfiks_izraz> OP_INC" or prod == "<postfiks_izraz> ::= <postfiks_izraz> OP_DEC":
+        #1
+        postfiks_izraz(node.children[0], table)
+
+        #2
+        l_expr = node.children[0].props["l_expr"]
+        node_type_0 = node.children[0].props["type"]
+
+        if l_expr == False or node_type_0 not in ["int", "char", "const int", "const char"]:
+            print(node.get_error())
+            sys.exit()
+
+        node.props.update({"type": "int", "l_expr": False})
+
+def lista_argumenata(node, tablica):
+    prod = node.get_production()
+
+    if prod == "<lista_argumenata> ::= <izraz_pridruzivanja>":
+        izraz_pridruzivanja(node.children[0], tablica)
+
+        node_type_0 = node.children[0].props["type"]
+        node.props.update({"type_list": list(node_type_0)})
+
+    elif prod == "<lista_argumenata> ::= <lista_argumenata> ZAREZ <izraz_pridruzivanja>":
+        lista_argumenata(node.children[0], tablica)
+
+        izraz_pridruzivanja(node.children[2], tablica)
+
+        node_type_list_0 = list.copy(node.children[0].props["types"])
+        node_type_list_0.append(node.children[2].props["type"])
+
+        node.props.update({"type_list": node_type_list_0})
+
+def unarni_izraz(node, tablica):
+    prod = node.get_production()
+
+    if prod == "<unarni_izraz> ::= <postfiks_izraz>":
+        postfiks_izraz(node.children[0], tablica)
+
+        node_type_0 = node.children[0].props["type"]
+        l_expr = node.children[0].props["l_expr"]
+        
+        node.props.update({"type": node_type_0, "l_expr": l_expr})
+
+    elif prod == "<unarni_izraz> ::= OP_INC <unarni_izraz>" or prod == "<unarni_izraz> ::= OP_DEC <unarni_izraz>":
+        #1
+        unarni_izraz(node.children[1], tablica)
+
+        #2
+        node_type_1 = node.children[1].props["type"]
+        l_expr = node.children[1].props["l_expr"]
+
+        if l_expr == False or node_type_1 not in ["int", "char", "const int", "const char"]:
+            print(node.get_error())
+            sys.exit()
+
+        node.props.update({"type": "int", "l_expr": False})
+
+    elif prod == "<unarni_izraz> ::= <unarni_operator> <cast_izraz>":
+        #1
+        cast_izraz(node.children[1], tablica)
+
+        #2
+        node_type_1 = node.children[1].props["type"]
+        if node_type_1 not in ["int", "char", "const int", "const char"]:
+            print(node.get_error())
+            sys.exit()
+
+        node.props.update({"type": "int", "l_expr": False})
+
+#def unarni_operator(node, tablica) -> u uputama pise da ne treba nista provjeravati
+
+
