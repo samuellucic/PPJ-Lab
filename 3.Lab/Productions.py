@@ -556,3 +556,163 @@ def jednakosni_izraz(node, tablica):
             sys.exit()
 
         node.props.update({"type": "int", "l_expr": False})
+
+def bin_i_izraz(node, tablica):
+    prod = node.get_production()
+
+    if prod == "<bin_i_izraz> ::= <jednakosni_izraz>":
+        jednakosni_izraz(node.children[0], tablica)
+
+        node_type_0 = node.children[0].props["type"]
+        l_expr = node.children[0].props["l_expr"]
+
+        node.props.update({"type": node_type_0, "l_expr": l_expr})
+
+    elif prod == "<bin_i_izraz> ::= <bin_i_izraz> OP_BIN_I <jednakosni_izraz>":
+        #1
+        bin_i_izraz(node.children[0], tablica)
+
+        #2
+        node_type_0 = node.children[0].props["type"]
+        if node_type_0 not in ["int", "char", "const int", "const char"]:
+            print(node.get_error())
+            sys.exit()
+
+        #3
+        jednakosni_izraz(node.children[2], tablica)
+
+        #4
+        node_type_2 = node.children[2].props["type"]
+        if node_type_2 not in ["int", "char", "const int", "const char"]:
+            print(node.get_error())
+            sys.exit()
+
+        node.props.update({"type": "int", "l_expr": False})
+
+def bin_xili_izraz(node, tablica):
+    prod = node.get_production()
+
+    if prod == "<bin_xili_izraz> ::= <bin_i_izraz>":
+        bin_i_izraz(node.children[0], tablica)
+
+        node_type_0 = node.children[0].props["type"]
+        l_expr = node.children[0].props["l_expr"]
+
+        node.props.update({"type": node_type_0, "l_expr": l_expr})
+
+    elif prod == "<bin_xili_izraz> ::= <bin_xili_izraz> OP_BIN_XILI <bin_i_izraz>":
+        #1
+        bin_xili_izraz(node.children[0], tablica)
+
+        #2
+        node_type_0 = node.children[0].props["type"]
+        if node_type_0 not in ["int", "char", "const int", "const char"]:
+            print(node.get_error())
+            sys.exit()
+
+        #3
+        bin_i_izraz(node.children[2], tablica)
+
+        #4
+        node_type_2 = node.children[2].props["type"]
+        if node_type_2 not in ["int", "char", "const int", "const char"]:
+            print(node.get_error())
+            sys.exit()
+
+        node.props.update({"type": "int", "l_expr": False})
+
+def bin_ili_izraz(node, tablica):
+    prod = node.get_production()
+
+    if prod == "<bin_ili_izraz> ::= <bin_xili_izraz>":
+        bin_xili_izraz(node.children[0], tablica)
+
+        node_type_0 = node.children[0].props["type"]
+        l_expr = node.children[0].props["l_expr"]
+
+        node.props.update({"type": node_type_0, "l_expr": l_expr})
+
+    elif prod == "<bin_ili_izraz> ::= <bin_ili_izraz> OP_BIN_ILI <bin_xili_izraz>":
+        #1
+        bin_ili_izraz(node.children[0], tablica)
+
+        #2
+        node_type_0 = node.children[0].props["type"]
+        if node_type_0 not in ["int", "char", "const int", "const char"]:
+            print(node.get_error())
+            sys.exit()
+
+        #3
+        bin_xili_izraz(node.children[2], tablica)
+
+        #4
+        node_type_2 = node.children[2].props["type"]
+        if node_type_2 not in ["int", "char", "const int", "const char"]:
+            print(node.get_error())
+            sys.exit()
+
+        node.props.update({"type": "int", "l_expr": False})
+
+def log_i_izraz(node, tablica):
+    prod = node.get_production()
+
+    if prod == "<log_i_izraz> ::= <bin_ili_izraz>":
+        bin_ili_izraz(node.children[0], tablica)
+
+        node_type_0 = node.children[0].props["type"]
+        l_expr = node.children[0].props["l_expr"]
+
+        node.props.update({"type": node_type_0, "l_expr": l_expr})
+
+    elif prod == "<log_i_izraz> ::= <log_i_izraz> OP_I <bin_ili_izraz>":
+        #1
+        log_i_izraz(node.children[0], tablica)
+
+        #2
+        node_type_0 = node.children[0].props["type"]
+        if node_type_0 not in ["int", "char", "const int", "const char"]:
+            print(node.get_error())
+            sys.exit()
+
+        #3
+        bin_ili_izraz(node.children[2], tablica)
+
+        #4
+        node_type_2 = node.children[2].props["type"]
+        if node_type_2 not in ["int", "char", "const int", "const char"]:
+            print(node.get_error())
+            sys.exit()
+
+        node.props.update({"type": "int", "l_expr": False})    
+
+def log_ili_izraz(node, tablica):
+    prod = node.get_production()  
+
+    if prod == "<log_ili_izraz> ::= <log_i_izraz>":
+        log_i_izraz(node.children[0], tablica)
+
+        node_type_0 = node.children[0].props["type"]
+        l_expr = node.children[0].props["l_expr"]
+
+        node.props.update({"type": node_type_0, "l_expr": l_expr})
+
+    elif prod == "<log_ili_izraz> ::= <log_ili_izraz> OP_ILI <log_i_izraz>":
+        #1
+        log_ili_izraz(node.children[0], tablica)
+
+        #2
+        node_type_0 = node.children[0].props["type"]
+        if node_type_0 not in ["int", "char", "const int", "const char"]:
+            print(node.get_error())
+            sys.exit()
+
+        #3
+        log_i_izraz(node.children[2], tablica)
+
+        #4
+        node_type_2 = node.children[2].props["type"]
+        if node_type_2 not in ["int", "char", "const int", "const char"]:
+            print(node.get_error())
+            sys.exit()
+
+        node.props.update({"type": "int", "l_expr": False})        
