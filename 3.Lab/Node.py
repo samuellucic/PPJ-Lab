@@ -5,6 +5,12 @@ class Node:
         self.children = None
         self.props = dict()
 
+        #props -> name (str)
+        #         l_expr (boolean) 
+        #         names (list<str>); (void = prazna lista) void ne bi trebalo ni biti moguce zbog sintaksne
+        #         type (str) <- ako je niz: niz(const(char)), ako je funkcija: funkcija([char, char] -> int)
+        #         type_list (list<str>); (void = prazna lista) void ne bi trebalo ni biti moguce zbog sintaksne
+
     def add_child(self, child):
         if not self.children:
             self.children = list()
@@ -13,6 +19,23 @@ class Node:
 
     def __str__(self, depth):
         output = self.props["name"].__str__()
+        # if self.props["name"].split()[0] == "ZNAK":
+        #     string = " ".join(self.props["name"].split()[2:])[1:-1]
+        #     if (len(string) > 1 and string not in [r'\t', r'\n', r'\0', r'\'', r'\"', r'\\']) or string == '\\':
+        #         print("greska " + string)
+        #     else:
+        #         print("ok " + string)
+        # if self.props["name"].split()[0] == "NIZ_ZNAKOVA":
+        #     string = " ".join(self.props["name"].split()[2:])[1:-1]
+        #     prosli = False
+        #     for i in range(len(string)):
+        #         if prosli:
+        #             prosli = False
+        #             continue
+        #         if string[i] == '\\':
+        #             prosli = True
+        #         if string[i] == '\\' and (i == len(string) - 1 or string[i+1] not in ['t', 'n', '0', '\'', '"', '\\']):
+        #             print("greska na znaku" + string[i])
 
         if self.children:
             for child in self.children:

@@ -33,7 +33,7 @@ for line in tree_input[1:]:
     previous_node = node
     previous_space_count = space_count
 
-#print(root_node.__str__(0))
+print(root_node.__str__(0))
 #print(root_node.get_children())
 
 root_table = TableNode()
