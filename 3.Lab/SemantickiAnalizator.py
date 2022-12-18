@@ -39,24 +39,52 @@ for line in tree_input[1:]:
 root_table = TableNode()
 prijevodna_jedinica(root_node, root_table)
 
-conditions = [False, True]
+#conditions = [False, True]
 
-def check_functions(table, conditions):
-    for name in table.table:
-        if (name == "main (func)" 
-                and table.table[name]["return_type"] == "int" 
-                and len(table.table[name]["params"]) == 0):
-            conditions[0] = True
-        if "(func)" in name and not table.table[name]["defined"]:
-            conditions[1] = False        
-
-    if table.children:
-        for child in table.children:
-            check_functions(child, conditions)
-
-check_functions(root_table, conditions)
-
-if not conditions[0]:
+if (not root_table.table.get("main (func)") 
+    or root_table.table["main (func)"]["return_type"] != "int"
+    or len(root_table.table["main (func)"]["params"]) != 0):
     print("main")
-elif not conditions[1]:
-    print("funkcija")
+
+def check_functions(root_tbl, table):
+    error = False
+    for name in table.table:
+        if " (func)" in name:
+            root_entry = root_tbl.table.get(name)
+            curr_entry = table.table.get(name)
+            if (not root_entry or not root_entry["defined"]
+                or root_entry["return_type"] != curr_entry["return_type"]
+                or root_entry["params"] != curr_entry["params"]):
+                print("funkcija")
+                error = True
+                break
+
+    if table.children and not error:
+        for child in table.children:
+            error = check_functions(root_tbl, child)
+            if error:
+                break
+
+    return error
+
+check_functions(root_table, root_table)
+
+# def check_functions(table, conditions):
+#     for name in table.table:
+#         if (name == "main (func)" 
+#                 and table.table[name]["return_type"] == "int" 
+#                 and len(table.table[name]["params"]) == 0):
+#             conditions[0] = True
+#         if "(func)" in name and not table.table[name]["defined"]:
+#             conditions[1] = False        
+
+#     if table.children:
+#         for child in table.children:
+#             check_functions(child, conditions)
+
+# check_functions(root_table, conditions)
+
+# if not conditions[0]:
+#     print("main")
+# elif not conditions[1]:
+#     print("funkcija")
