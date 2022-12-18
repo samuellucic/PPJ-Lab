@@ -5,6 +5,6 @@ do
 	cd ..
 	path=$(echo $dir| cut -c 3-)
 	printf "\n----------\n$path\n----------\n"
-	py Sem.py < ./tests/$path/test.in > ./outputs/"$path".out
+	py SemantickiAnalizator.py < ./tests/$path/test.in > ./outputs/"$path".out
 	cd ./tests
 done)

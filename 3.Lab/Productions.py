@@ -1131,8 +1131,13 @@ def init_deklarator(node, table):
                 print(node.get_error())
                 sys.exit()
 
+            node_type_0_shortened = node_type_0.split("niz(")[1][:-1]
+
             for type in node.children[2].props["type_list"]:
-                if type not in ["int", "char"]:
+                if node_type_0_shortened in ["char", "const(char)"] and type not in ["char", "const(char)"]:
+                    print(node.get_error())
+                    sys.exit()
+                elif node_type_0_shortened in ["int", "const(int)"] and type not in ["int", "const(int)", "char", "const(char)"]:
                     print(node.get_error())
                     sys.exit()
         else:
@@ -1193,11 +1198,20 @@ def izravni_deklarator(node, table):
     elif prod == "<izravni_deklarator> ::= IDN L_ZAGRADA KR_VOID D_ZAGRADA":
         #1
         node_i_type = node.props["i_type"]
+        node_name_0_not_func = node.children[0].props["name"].split()[2]
         node_name_0 = node.children[0].props["name"].split()[2] + " (func)"
         if table.table.get(node_name_0):
-            if node.parent.props["type"] != f"funkcija(void -> {node_i_type})":
+            return_type = table.table.get(node_name_0)["return_type"]
+            params = table.table.get(node_name_0)["params"]
+            if return_type != node_i_type or len(params) != 0:
                 print(node.get_error())
                 sys.exit()
+            # if node.parent.props["type"] != f"funkcija(void -> {node_i_type})":
+            #     print(node.get_error())
+            #     sys.exit()
+        elif table.table.get(node_name_0_not_func):
+            print(node.get_error())
+            sys.exit()
     
         #2
         else:
@@ -1217,12 +1231,20 @@ def izravni_deklarator(node, table):
         #2
         node_i_type = node.props["i_type"]
         node_type_list_2 = node.children[2].props["type_list"]
+        node_name_0_not_func = node.children[0].props["name"].split()[2]
         node_name_0 = node.children[0].props["name"].split()[2] + " (func)"
         if table.table.get(node_name_0):
-            if node.parent.props["type"] != f"funkcija({str(node_type_list_2)} -> {node_i_type})":
+            return_type = table.table.get(node_name_0)["return_type"]
+            params = table.table.get(node_name_0)["params"]
+            if return_type != node_i_type or params != node_type_list_2:
                 print(node.get_error())
                 sys.exit()
-    
+            # if node.parent.props["type"] != f"funkcija({str(node_type_list_2)} -> {node_i_type})":
+            #     print(node.get_error())
+            #     sys.exit()
+        elif table.table.get(node_name_0_not_func):
+            print(node.get_error())
+            sys.exit()
         #3
         else:
             table.table.update({
@@ -1232,8 +1254,12 @@ def izravni_deklarator(node, table):
                     "return_type": node_i_type
                 }
             })
-        
-        node.props["type"] = f"funkcija({str(node_type_list_2)} -> {node_i_type})"
+
+        type_ = "funkcija("
+        type_list_ = ("[" + ", ".join(node_type_list_2) + "]") if len(node_type_list_2) > 0 else "void"
+        type_ += (type_list_ + " -> " + node_i_type + ")")
+        node.props["type"] = type_
+        #node.props["type"] = f"funkcija({str(node_type_list_2)} -> {node_i_type})" #str ostavi navodnike pa bude npr ['char'] umj [char]
 
 def inicijalizator(node, table):
     prod = node.get_production()
@@ -1243,12 +1269,12 @@ def inicijalizator(node, table):
 
         node_niz_znakova = check_for_child_node(node, "NIZ_ZNAKOVA")
         if node_niz_znakova:
-            niz_znakova_value = node_niz_znakova.props["name"].split()[2][1:-1]
+            niz_znakova_value = " ".join(node_niz_znakova.props["name"].split()[2:])[1:-1]
 
             node.props.update({"elem_num": len(niz_znakova_value) + 1})
 
             node_type_list = list()
-            for i in range(len(niz_znakova_value)):
+            for i in range(len(niz_znakova_value) + 1): #lista duljine br-elem?
                 node_type_list.append("char")
             node.props.update({"type_list": node_type_list})
         else:
