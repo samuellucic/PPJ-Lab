@@ -10,7 +10,9 @@ class Node:
         #         names (list<str>); (void = prazna lista) void ne bi trebalo ni biti moguce zbog sintaksne
         #         type (str) <- ako je niz: niz(const(char)), ako je funkcija: funkcija([char, char] -> int)
         #         type_list (list<str>); (void = prazna lista) void ne bi trebalo ni biti moguce zbog sintaksne
-
+        #         i_type; (inherited type) za varijable brojeva ntip ce biti cijeli tip, za nizove ce biti tip elemenata niza,
+        #                 a za fje ce biti povratni tip
+        #         elem_num; broj elemenata
     def add_child(self, child):
         if not self.children:
             self.children = list()

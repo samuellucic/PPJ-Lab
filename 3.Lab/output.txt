@@ -1,0 +1,90 @@
+Comparing files OUTPUTS\01_idn.out and TESTS\01_IDN\TEST.OUT
+FC: no differences encountered
+
+Comparing files OUTPUTS\02_broj.out and TESTS\02_BROJ\TEST.OUT
+FC: no differences encountered
+
+Comparing files OUTPUTS\03_niz_znakova.out and TESTS\03_NIZ_ZNAKOVA\TEST.OUT
+FC: no differences encountered
+
+Comparing files OUTPUTS\04_pogresan_main.out and TESTS\04_POGRESAN_MAIN\TEST.OUT
+FC: no differences encountered
+
+Comparing files OUTPUTS\05_impl_int2char.out and TESTS\05_IMPL_INT2CHAR\TEST.OUT
+FC: no differences encountered
+
+Comparing files OUTPUTS\06_nedekl_fun.out and TESTS\06_NEDEKL_FUN\TEST.OUT
+FC: no differences encountered
+
+Comparing files OUTPUTS\07_nedef_fun.out and TESTS\07_NEDEF_FUN\TEST.OUT
+FC: no differences encountered
+
+Comparing files OUTPUTS\08_ne_arg.out and TESTS\08_NE_ARG\TEST.OUT
+FC: no differences encountered
+
+Comparing files OUTPUTS\09_fun_povtip.out and TESTS\09_FUN_POVTIP\TEST.OUT
+FC: no differences encountered
+
+Comparing files OUTPUTS\10_fun_params.out and TESTS\10_FUN_PARAMS\TEST.OUT
+FC: no differences encountered
+
+Comparing files OUTPUTS\11_niz.out and TESTS\11_NIZ\TEST.OUT
+FC: no differences encountered
+
+Comparing files OUTPUTS\12_fun_niz.out and TESTS\12_FUN_NIZ\TEST.OUT
+FC: no differences encountered
+
+Comparing files OUTPUTS\13_lval1.out and TESTS\13_LVAL1\TEST.OUT
+FC: no differences encountered
+
+Comparing files OUTPUTS\14_lval2.out and TESTS\14_LVAL2\TEST.OUT
+FC: no differences encountered
+
+Comparing files OUTPUTS\15_cast1.out and TESTS\15_CAST1\TEST.OUT
+FC: no differences encountered
+
+Comparing files OUTPUTS\16_cast2.out and TESTS\16_CAST2\TEST.OUT
+FC: no differences encountered
+
+Comparing files OUTPUTS\17_log.out and TESTS\17_LOG\TEST.OUT
+FC: no differences encountered
+
+Comparing files OUTPUTS\18_if.out and TESTS\18_IF\TEST.OUT
+FC: no differences encountered
+
+Comparing files OUTPUTS\19_cont_brk.out and TESTS\19_CONT_BRK\TEST.OUT
+FC: no differences encountered
+
+Comparing files OUTPUTS\20_ret_void.out and TESTS\20_RET_VOID\TEST.OUT
+FC: no differences encountered
+
+Comparing files OUTPUTS\21_ret_nonvoid.out and TESTS\21_RET_NONVOID\TEST.OUT
+FC: no differences encountered
+
+Comparing files OUTPUTS\22_fun_multidef.out and TESTS\22_FUN_MULTIDEF\TEST.OUT
+FC: no differences encountered
+
+Comparing files OUTPUTS\23_rek.out and TESTS\23_REK\TEST.OUT
+FC: no differences encountered
+
+Comparing files OUTPUTS\24_param_dekl.out and TESTS\24_PARAM_DEKL\TEST.OUT
+FC: no differences encountered
+
+Comparing files OUTPUTS\25_fun_dekl_def.out and TESTS\25_FUN_DEKL_DEF\TEST.OUT
+FC: no differences encountered
+
+Comparing files OUTPUTS\26_multi_dekl.out and TESTS\26_MULTI_DEKL\TEST.OUT
+FC: no differences encountered
+
+Comparing files OUTPUTS\27_dekl_odmah_aktivna.out and TESTS\27_DEKL_ODMAH_AKTIVNA\TEST.OUT
+FC: no differences encountered
+
+Comparing files OUTPUTS\28_niz_init.out and TESTS\28_NIZ_INIT\TEST.OUT
+FC: no differences encountered
+
+Comparing files OUTPUTS\29_for.out and TESTS\29_FOR\TEST.OUT
+FC: no differences encountered
+
+Comparing files OUTPUTS\30_const_init.out and TESTS\30_CONST_INIT\TEST.OUT
+FC: no differences encountered
+

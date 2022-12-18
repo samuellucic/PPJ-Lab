@@ -33,8 +33,30 @@ for line in tree_input[1:]:
     previous_node = node
     previous_space_count = space_count
 
-print(root_node.__str__(0))
+#print(root_node.__str__(0))
 #print(root_node.get_children())
 
 root_table = TableNode()
 prijevodna_jedinica(root_node, root_table)
+
+conditions = [False, True]
+
+def check_functions(table, conditions):
+    for name in table.table:
+        if (name == "main (func)" 
+                and table.table[name]["return_type"] == "int" 
+                and len(table.table[name]["params"]) == 0):
+            conditions[0] = True
+        if "(func)" in name and not table.table[name]["defined"]:
+            conditions[1] = False        
+
+    if table.children:
+        for child in table.children:
+            check_functions(child, conditions)
+
+check_functions(root_table, conditions)
+
+if not conditions[0]:
+    print("main")
+elif not conditions[1]:
+    print("funkcija")
