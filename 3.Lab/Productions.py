@@ -41,6 +41,7 @@ def definicija_funkcije(node, table):
             sys.exit()
         
         #4
+        node_name_1_not_func = node.children[1].props["name"].split()[2]
         if fun:
             return_type = fun.get("return_type")
             params = fun.get("params")
@@ -48,6 +49,9 @@ def definicija_funkcije(node, table):
             if return_type != node_type_0 or len(params) != 0:
                 print(node.get_error())
                 sys.exit()
+        elif table.table.get(node_name_1_not_func):
+            print(node.get_error())
+            sys.exit()
 
         #5
         table.table.update({
@@ -87,6 +91,7 @@ def definicija_funkcije(node, table):
         node_names_3 = node.children[3].props["names"]
 
         #5
+        node_name_1_not_func = node.children[1].props["name"].split()[2]
         if fun:
             return_type = fun.get("return_type")
             params = fun.get("params")
@@ -94,6 +99,10 @@ def definicija_funkcije(node, table):
             if return_type != node_type_0 or params != node_type_list_3:
                 print(node.get_error())
                 sys.exit()
+        elif table.table.get(node_name_1_not_func):
+            print(node.get_error())
+            sys.exit()
+
         #6
         table.table.update({
             fun_name: {
@@ -143,8 +152,7 @@ def primarni_izraz(node, table):
             
     elif prod == "<primarni_izraz> ::= BROJ":
         node.props.update({"type": "int", "l_expr": False})
-        child_value = int(node.children[0].props["name"].split()[2]
-)
+        child_value = int(node.children[0].props["name"].split()[2])
         if child_value < -2147483648 or child_value > 2147483647:
             print(node.get_error())
             sys.exit()
