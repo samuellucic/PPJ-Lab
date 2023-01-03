@@ -101,12 +101,12 @@ with open("a.frisc", "w") as file:
     file.write(" JR_NZ PETLJA\n")
 
     file.write(" ROTL R3, 1, R3\n")
-    file.write(" JR_NC GOTOVO\n")
+    file.write(" JR_NC GOTOVO_1\n")
 
     file.write(" XOR R2, -1, R2\n")
     file.write(" ADD R2, 1, R2\n")
 
-    file.write("GOTOVO ADD R2, 0, R6\n")
+    file.write("GOTOVO_1 ADD R2, 0, R6\n")
     file.write(" RET\n")
 
     #DIJELJENJE
@@ -137,7 +137,7 @@ with open("a.frisc", "w") as file:
     file.write(" XOR R2, -1, R2\n")
     file.write(" ADD R2, 1, R2\n")
 
-    file.write("GOTOVO ADD R2, 0, R6\n")
+    file.write("GOTOVO_2 ADD R2, 0, R6\n")
     file.write(" RET\n")
 
     file.write("LABEL_0")

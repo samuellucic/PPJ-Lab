@@ -50,13 +50,17 @@ FC: no differences encountered
 
 Comparing files OUTPUTS\14_scope2.out and TESTS\14_SCOPE2\TEST.OUT
 ***** OUTPUTS\14_scope2.out
-12
+14883
 ***** TESTS\14_SCOPE2\TEST.OUT
 123
 *****
 
 Comparing files OUTPUTS\15_scope3.out and TESTS\15_SCOPE3\TEST.OUT
-FC: no differences encountered
+***** OUTPUTS\15_scope3.out
+0
+***** TESTS\15_SCOPE3\TEST.OUT
+32
+*****
 
 Comparing files OUTPUTS\16_scope4.out and TESTS\16_SCOPE4\TEST.OUT
 ***** OUTPUTS\16_scope4.out
