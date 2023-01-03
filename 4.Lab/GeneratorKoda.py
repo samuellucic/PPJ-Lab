@@ -68,8 +68,79 @@ def check_functions(root_tbl, table):
     return error
 with open("a.frisc", "w") as file:
     file.write(" MOVE 40000, R7\n")
-    file.write(" CALL F_MAIN\n")
-    file.write(" HALT\n")
+    file.write(" JP LABEL_0\n")
+
+    file.write("MASK DW 0FFFFFFFF\n")
+
+    file.write("H_COMP LOAD R0, (SP+4)\n")
+    file.write(" LOAD R1, (MASK)\n")
+    file.write(" XOR R0, R1, R0\n")
+    file.write(" ADD R0, 1, R6\n")    
+    file.write(" RET\n")
+
+    #množenje
+    file.write("H_MULT LOAD R0, (SP+8)\n")
+    file.write(" LOAD R1, (SP+4)\n")
+    file.write(" MOVE 0, R2\n")
+    file.write(" XOR R0, R1, R3\n")
+    
+    file.write("TEST_1 OR R0, R0, R0\n")
+    file.write(" JR_P TEST_2\n")
+
+    file.write("NEGAT_1 XOR R0, -1, R0\n")
+    file.write(" ADD R0, 1, R0\n")
+
+    file.write("TEST_2 OR R1, R1, R1\n")
+    file.write(" JR_P PETLJA\n")
+
+    file.write("NEGAT_2 XOR R1, -1, R1\n")
+    file.write(" ADD R1, 1, R1\n")
+    
+    file.write("PETLJA ADD R0, R2, R2\n")
+    file.write(" SUB R1, 1, R1\n")
+    file.write(" JR_NZ PETLJA\n")
+
+    file.write(" ROTL R3, 1, R3\n")
+    file.write(" JR_NC GOTOVO\n")
+
+    file.write(" XOR R2, -1, R2\n")
+    file.write(" ADD R2, 1, R2\n")
+
+    file.write("GOTOVO ADD R2, 0, R6\n")
+    file.write(" RET\n")
+
+    #DIJELJENJE
+    file.write("H_DIV LOAD R0, (SP+8) \n")
+    file.write(" LOAD R1, (SP+4)\n")
+    file.write(" MOVE -1, R2\n")
+    file.write(" XOR R0, R1, R3\n")
+
+    file.write("TEST_3 OR R0, R0, R0\n")
+    file.write(" JR_P TEST_4\n")
+
+    file.write("NEGAT_3 XOR R0, -1, R0\n")
+    file.write(" ADD R0, 1, R0\n")
+
+    file.write("TEST_4 OR R1, R1, R1\n")
+    file.write(" JR_P PETLJA_2\n")
+
+    file.write("NEGAT_4 XOR R1, -1, R1\n")
+    file.write(" ADD R1, 1, R1\n")
+    
+    file.write("PETLJA_2 ADD R2, 1, R2\n")
+    file.write(" SUB R0, R1, R0\n")
+    file.write(" JR_UGE PETLJA\n")
+
+    file.write(" ROTL R3, 1, R3\n")
+    file.write(" JR_NC GOTOVO_2\n")
+
+    file.write(" XOR R2, -1, R2\n")
+    file.write(" ADD R2, 1, R2\n")
+
+    file.write("GOTOVO ADD R2, 0, R6\n")
+    file.write(" RET\n")
+
+    file.write("LABEL_0")
 
 check_functions(root_table, root_table)
 

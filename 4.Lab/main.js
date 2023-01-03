@@ -222,4 +222,4 @@ function runProgram(frisc_asmsource) {
   }
   
   simulator.CPU.run();
-} 
+}

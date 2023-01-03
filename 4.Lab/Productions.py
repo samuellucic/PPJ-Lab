@@ -2,14 +2,15 @@ import sys
 from TableNode import TableNode
 
 file = open("a.frisc", "a")
+label = 1
 
 def convert_int_to_twos(n: int) -> str:
     return '{0:08X}'.format(int(bin(n % (1<<32)), 2))
 
-def is_in_function(node):
+def is_in_function(node, node_name):
     parent_node = node.parent
     while parent_node:
-        if parent_node.props["name"] == "<definicija_funkcije>":
+        if parent_node.props["name"] == node_name:
             return True
         parent_node = parent_node.parent
 
@@ -33,8 +34,14 @@ def vanjska_deklaracija(node, table):
         deklaracija(node.children[0], table)
 
 def definicija_funkcije(node, table):
+    global label
     prod = node.get_production()
     
+    if node.children[1].props['name'].split()[2]== "main":
+        file.write(" CALL F_MAIN\n")
+        file.write(" HALT\n")
+    else:
+        file.write(f" JP LABEL_{label}\n")
     file.write(f"F_{node.children[1].props['name'].split()[2].upper()}")
     if prod == "<definicija_funkcije> ::= <ime_tipa> IDN L_ZAGRADA KR_VOID D_ZAGRADA <slozena_naredba>":
         #1
@@ -143,6 +150,10 @@ def definicija_funkcije(node, table):
 
         slozena_naredba(node.children[5], child_table)
 
+    if node.children[1].props['name'].split()[2] != "main":
+        file.write(f"LABEL_{label}")
+        label += 1
+
 def primarni_izraz(node, table):
     prod = node.get_production()
 
@@ -165,23 +176,40 @@ def primarni_izraz(node, table):
                 type_list = ("[" + ", ".join(copy_child_func.get("params")) + "]") if len(copy_child_func.get("params")) > 0 else "void"
                 type += (type_list + " -> " + copy_child_func.get("return_type") + ")")
                 node.props.update({"type": type, "l_expr": False})
-                break
+                return
             elif copy_table.parent:
                 copy_table = copy_table.parent
             else:
                 print(node.get_error())
                 sys.exit()
-
-        copy_table = table.parent
-        while copy_table:
-            if copy_table.table.get(child_name):
-                if copy_table.parent:
-                    pass
+        
+        address = 0
+        temp_table = table
+        
+        while temp_table:
+            if temp_table.table.get(child_name):
+                if (temp_table.table.get(child_name).get("location") == "local"):
+                    address += (temp_table.table.get("temp size") + 
+                                (temp_table.table.get("local size") - temp_table.table.get(child_name).get("location_num"))) 
                 else:
-                    file.write(f" LOAD R0, (G_{child_name.upper()})\n")
-                    file.write(f" PUSH R0\n")
-                    table.table.update({"temp size": table.table.get("temp size") + 4})
-            copy_table = copy_table.parent
+                    address += (temp_table.table.get("temp size") +
+                                temp_table.table.get("local size") + 4 +
+                                (temp_table.table.get("param size") - temp_table.table.get(child_name).get("location_num"))) 
+                break
+            else:
+                address += (temp_table.table.get("temp size") +
+                                temp_table.table.get("local size") + 4 +
+                                temp_table.table.get("param size"))
+                temp_table = temp_table.parent
+
+        if is_in_function(node, "<unarni_izraz>"):
+            file.write(f" LOAD R0, (SP+{address})\n")
+            file.write(" PUSH R0\n")
+        else:
+            file.write(f" MOVE %D {address}, R0\n")
+            file.write(" PUSH R0\n")
+
+        table.table.update({"temp size": table.table.get("temp size") + 4})
             
     elif prod == "<primarni_izraz> ::= BROJ":
         node.props.update({"type": "int", "l_expr": False})
@@ -190,17 +218,16 @@ def primarni_izraz(node, table):
             print(node.get_error())
             sys.exit()
 
-        if is_in_function(node):
-            twos = convert_int_to_twos(child_value)
-            twos_1 = twos[:4]
-            twos_2 = twos[4:]
-            
-            file.write(f" MOVE {twos_1}, R0\n")
-            file.write(f" ROTL R0, %d 16, R0\n")
-            file.write(f" ADD R0, {twos_2}, R0\n")
-            file.write(" PUSH R0\n")
+        twos = convert_int_to_twos(child_value)
+        twos_1 = twos[:4]
+        twos_2 = twos[4:]
+        
+        file.write(f" MOVE {twos_1}, R0\n")
+        file.write(f" ROTL R0, %d 16, R0\n")
+        file.write(f" ADD R0, {twos_2}, R0\n")
+        file.write(" PUSH R0\n")
 
-            table.table.update({"temp size": table.table.get("temp size") + 4})
+        table.table.update({"temp size": table.table.get("temp size") + 4})
 
     elif prod == "<primarni_izraz> ::= ZNAK":
         node.props.update({"type": "char", "l_expr": False})
@@ -214,13 +241,12 @@ def primarni_izraz(node, table):
         char_1 = char[:4]
         char_2 = char[4:]
         
-        if is_in_function(node):
-            file.write(f" MOVE {char_1}, R0\n")
-            file.write(f" ROTL R0, %d 16, R0\n")
-            file.write(f" ADD R0, {char_2}, R0\n")
-            file.write(" PUSH R0\n")
-            
-            table.table.update({"temp size": table.table.get("temp size") + 4})
+        file.write(f" MOVE {char_1}, R0\n")
+        file.write(f" ROTL R0, %d 16, R0\n")
+        file.write(f" ADD R0, {char_2}, R0\n")
+        file.write(" PUSH R0\n")
+        
+        table.table.update({"temp size": table.table.get("temp size") + 4})
 
     elif prod == "<primarni_izraz> ::= NIZ_ZNAKOVA":
         node.props.update({"type": "niz(const(char))", "l_expr": False})
@@ -286,6 +312,10 @@ def postfiks_izraz(node, table):
 
         return_type = node_type_0.split(" -> ")[1][:-1]
         node.props.update({"type": return_type, "l_expr": False})
+
+        name = node.children[0].children[0].children[0].props["name"].split()[2].upper()
+        file.write(f" CALL F_{name}\n")
+        file.write(f" PUSH R6\n")
 
     elif prod == "<postfiks_izraz> ::= <postfiks_izraz> L_ZAGRADA <lista_argumenata> D_ZAGRADA":
         #1
@@ -408,6 +438,11 @@ def unarni_izraz(node, table):
             sys.exit()
 
         node.props.update({"type": "int", "l_expr": False})
+
+        if node.children[0].children[0].props["name"].split()[2] == "-":
+            file.write(" CALL H_COMP\n")
+            file.write(" ADD SP, 4, SP\n")
+            file.write(" PUSH R6\n")
 
 #def unarni_operator(node, table) -> u uputama pise da ne treba nista provjeravati
 
@@ -549,6 +584,17 @@ def aditivni_izraz(node, table):
 
         node.props.update({"type": "int", "l_expr": False})
 
+        file.write(" POP R0\n")
+        file.write(" POP R1\n")
+        if "PLUS" in prod:
+            file.write(" ADD R0, R1, R0\n")
+        else:
+            file.write(" SUB R1, R0, R0\n")
+        file.write(" PUSH R0\n")
+
+        table.table.update({"temp size": table.table.get("temp size") - 4})
+            
+
 def odnosni_izraz(node, table):
     prod = node.get_production()
 
@@ -650,6 +696,13 @@ def bin_i_izraz(node, table):
             sys.exit()
 
         node.props.update({"type": "int", "l_expr": False})
+    
+        file.write(" POP R0\n")
+        file.write(" POP R1\n")
+        file.write(" AND R0, R1, R0\n")
+        file.write(" PUSH R0\n")
+
+        table.table.update({"temp size": table.table.get("temp size") - 4})
 
 def bin_xili_izraz(node, table):
     prod = node.get_production()
@@ -683,6 +736,13 @@ def bin_xili_izraz(node, table):
 
         node.props.update({"type": "int", "l_expr": False})
 
+        file.write(" POP R0\n")
+        file.write(" POP R1\n")
+        file.write(" XOR R0, R1, R0\n")
+        file.write(" PUSH R0\n")
+
+        table.table.update({"temp size": table.table.get("temp size") - 4})
+
 def bin_ili_izraz(node, table):
     prod = node.get_production()
 
@@ -714,6 +774,13 @@ def bin_ili_izraz(node, table):
             sys.exit()
 
         node.props.update({"type": "int", "l_expr": False})
+
+        file.write(" POP R0\n")
+        file.write(" POP R1\n")
+        file.write(" OR R0, R1, R0\n")
+        file.write(" PUSH R0\n")
+
+        table.table.update({"temp size": table.table.get("temp size") - 4})
 
 def log_i_izraz(node, table):
     prod = node.get_production()
@@ -1022,6 +1089,7 @@ def naredba_skoka(node, table):
             print(node.get_error())
             sys.exit()
 
+        #TODO CLEAR STACK FOR ALL SCOPES OF FUNCTION
         file.write(f" ADD SP, {table.table.get('local size')}, SP")
         file.write(" RET")
 
@@ -1175,6 +1243,7 @@ def init_deklarator(node, table):
             sys.exit()
     elif prod == "<init_deklarator> ::= <izravni_deklarator> OP_PRIDRUZI <inicijalizator>":
         #1
+        file.write(" SUB SP, 4, SP\n")
         node.children[0].props.update({"i_type": node.props["i_type"]})
         izravni_deklarator(node.children[0], table)
 
@@ -1212,18 +1281,21 @@ def init_deklarator(node, table):
             print(node.get_error())
             sys.exit()
 
-        if not table.parent:
-            temp_node = node.children[2]
-            while temp_node.children:
-                temp_node = temp_node.children[0]
-            value = int(temp_node.props['name'].split()[2])
-            file.write(f"G_{node.children[0].children[0].props['name'].split()[2].upper()} DW %D {value}\n")
-        else:
-            file.write(" POP R1\n")
-            file.write(" POP R0\n")
-            file.write(" ADD SP, R0, R2\n")
-            file.write(" STORE R1, (R2)\n")
-            table.table.update({"temp size": table.table.get("temp size") - 8})
+        # if not table.parent:
+        #     temp_node = node.children[2]
+        #     while temp_node.children:
+        #         if temp_node.props["name"] == "<unarni_izraz>":
+        #             temp_node = temp_node.children[1]
+        #         else:
+        #             temp_node = temp_node.children[0]
+        #     value = int(temp_node.props['name'].split()[2])
+        #     file.write(f"G_{node.children[0].children[0].props['name'].split()[2].upper()} DW %D {value}\n")
+        # else:
+        file.write(" POP R1\n")
+        file.write(" POP R0\n")
+        file.write(" ADD SP, R0, R2\n")
+        file.write(" STORE R1, (R2)\n")
+        table.table.update({"temp size": table.table.get("temp size") - 8})
 
 def izravni_deklarator(node, table):
     prod = node.get_production()
@@ -1250,10 +1322,11 @@ def izravni_deklarator(node, table):
                 "location_num": table.table["local size"]
             }
         })
-        if is_in_function(node):
-            adress = table.table["local size"] - table.table[node_name_0]["location_num"]
-            file.write(f" MOVE {adress}, R0\n")
-            file.write(f" PUSH R0\n")
+        adress = table.table["local size"] - table.table[node_name_0]["location_num"]
+        file.write(f" MOVE {adress}, R0\n")
+        file.write(f" PUSH R0\n")
+        
+        table.table.update({"temp size": table.table.get("temp size") + 4})
 
         node.props["type"] = node_i_type
     elif prod == "<izravni_deklarator> ::= IDN L_UGL_ZAGRADA BROJ D_UGL_ZAGRADA":
