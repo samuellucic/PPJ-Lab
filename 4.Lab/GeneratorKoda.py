@@ -66,25 +66,12 @@ def check_functions(root_tbl, table):
                 break
 
     return error
+with open("a.frisc", "w") as file:
+    file.write(" MOVE 40000, R7\n")
+    file.write(" CALL F_MAIN\n")
+    file.write(" HALT\n")
 
 check_functions(root_table, root_table)
 
-# def check_functions(table, conditions):
-#     for name in table.table:
-#         if (name == "main (func)" 
-#                 and table.table[name]["return_type"] == "int" 
-#                 and len(table.table[name]["params"]) == 0):
-#             conditions[0] = True
-#         if "(func)" in name and not table.table[name]["defined"]:
-#             conditions[1] = False        
+print(root_table.__str__(0))
 
-#     if table.children:
-#         for child in table.children:
-#             check_functions(child, conditions)
-
-# check_functions(root_table, conditions)
-
-# if not conditions[0]:
-#     print("main")
-# elif not conditions[1]:
-#     print("funkcija")

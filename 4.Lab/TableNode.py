@@ -3,14 +3,20 @@ class TableNode:
     def __init__(self):
         self.parent = None
         self.children = None
-        self.table = dict()
+        self.table = {"param size": 0, "local size": 0, "temp size": 0}
         #dict:
-        # "a":      type: string ili "niz(string)" -> u slucaju da je array
+        # "a":      type: string ili "niz(string)" -> u slucaju da je array ili "ref"
         #           nepotreban (racuna se putem tipa): l_expr: boolean
+        #           location (vrijednost local ili param)
+        #           location_num (npr 4)
         # "a (func)": defined: boolean -> imenovana kao npr. a func
         #             return_type: string
         #             params: list<string>
         #               ako je params void -> prazna lista
+        # param size
+        # local size
+        # temp size
+        # 
 
     def add_child(self, child):
         if not self.children:
