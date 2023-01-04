@@ -77,7 +77,15 @@ Comparing files OUTPUTS\25_niz3.out and TESTS\25_NIZ3\TEST.OUT
 FC: no differences encountered
 
 Comparing files OUTPUTS\26_niz4.out and TESTS\26_NIZ4\TEST.OUT
+<<<<<<< HEAD
 FC: no differences encountered
+=======
+***** OUTPUTS\26_niz4.out
+0
+***** TESTS\26_NIZ4\TEST.OUT
+123
+*****
+>>>>>>> fed6882e2c6600ef10fe27c682fb927b24f46916
 
 Comparing files OUTPUTS\27_rek.out and TESTS\27_REK\TEST.OUT
 FC: no differences encountered
@@ -98,11 +106,15 @@ Comparing files OUTPUTS\32_gcd.out and TESTS\32_GCD\TEST.OUT
 FC: no differences encountered
 
 Comparing files OUTPUTS\33_short.out and TESTS\33_SHORT\TEST.OUT
+<<<<<<< HEAD
 ***** OUTPUTS\33_short.out
 2
 ***** TESTS\33_SHORT\TEST.OUT
 15
 *****
+=======
+FC: no differences encountered
+>>>>>>> fed6882e2c6600ef10fe27c682fb927b24f46916
 
 Comparing files OUTPUTS\34_izraz.out and TESTS\34_IZRAZ\TEST.OUT
 FC: no differences encountered
