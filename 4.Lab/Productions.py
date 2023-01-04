@@ -602,14 +602,23 @@ def multiplikativni_izraz(node, table):
 
         node.props.update({"type": "int", "l_expr": False})
 
-
         if "OP_PUTA" in prod:
             file.write(" CALL H_MULT\n")
         elif "OP_DIJELI" in prod:
             file.write(" CALL H_DIV\n")
         else:
-            file.write(" CALL H_MOD\n")
-        file.write(" ADD SP, 8, SP\n")
+            file.write(" POP R1\n")
+            file.write(" POP R0\n")
+            file.write(" MOVE -1, R2\n")
+
+            file.write("PETLJA_3 SUB R0, R1, R3\n")
+            file.write(" JP_SLT GOTOVO_3\n")
+
+            file.write(" ADD R2, 1, R2\n")
+            file.write(" SUB R0, R1, R0\n")
+            file.write(" JR_UGE PETLJA_3\n")
+
+            file.write("GOTOVO_3 ADD R0, 0, R6\n")
         file.write(" PUSH R6\n")
 
         table.table.update({"temp size": table.table.get("temp size") - 4})

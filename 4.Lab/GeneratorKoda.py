@@ -148,17 +148,19 @@ with open("a.frisc", "w") as file:
     # file.write(" RET\n")
 
     # OSTATAK
-    file.write("H_MOD LOAD R1, (SP+8) \n")
-    file.write(" LOAD R0, (SP+4)\n")
-    file.write(" MOVE -1, R2\n")
-    file.write(" XOR R0, R1, R3\n")
+    # file.write("H_MOD LOAD R0, (SP+8) \n")
+    # file.write(" LOAD R1, (SP+4)\n")
+    # file.write(" MOVE -1, R2\n")
 
-    file.write("PETLJA_3 ADD R2, 1, R2\n")
-    file.write(" SUB R0, R1, R0\n")
-    file.write(" JR_UGE PETLJA_3\n")
+    # file.write(" SUB R0, R1, R3\n")
+    # file.write(" JP_SLT GOTOVO_3\n")
 
-    file.write("GOTOVO_3 ADD R0, 0, R6\n")
-    file.write(" RET\n")
+    # file.write("PETLJA_3 ADD R2, 1, R2\n")
+    # file.write(" SUB R0, R1, R0\n")
+    # file.write(" JR_UGE PETLJA_3\n")
+
+    # file.write("GOTOVO_3 ADD R0, 0, R6\n")
+    # file.write(" RET\n")
 
     file.write("LABEL_0")
 
