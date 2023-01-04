@@ -78,6 +78,13 @@ with open("a.frisc", "w") as file:
     file.write(" ADD R0, 1, R6\n")    
     file.write(" RET\n")
 
+    file.write("MASK_J DW 1\n")
+
+    file.write("H_JEDAN\n")
+    file.write(" LOAD R6, (MASK_J)\n")
+    file.write(" RET\n")
+
+
     #množenje
     # file.write("H_MULT LOAD R0, (SP+8)\n")
     # file.write(" LOAD R1, (SP+4)\n")
@@ -129,7 +136,7 @@ with open("a.frisc", "w") as file:
     
     # file.write("PETLJA_2 ADD R2, 1, R2\n")
     # file.write(" SUB R0, R1, R0\n")
-    # file.write(" JR_UGE PETLJA\n")
+    # file.write(" JR_UGE PETLJA_2\n")
 
     # file.write(" ROTL R3, 1, R3\n")
     # file.write(" JR_NC GOTOVO_2\n")
@@ -139,6 +146,19 @@ with open("a.frisc", "w") as file:
 
     # file.write("GOTOVO_2 ADD R2, 0, R6\n")
     # file.write(" RET\n")
+
+    # OSTATAK
+    file.write("H_MOD LOAD R1, (SP+8) \n")
+    file.write(" LOAD R0, (SP+4)\n")
+    file.write(" MOVE -1, R2\n")
+    file.write(" XOR R0, R1, R3\n")
+
+    file.write("PETLJA_3 ADD R2, 1, R2\n")
+    file.write(" SUB R0, R1, R0\n")
+    file.write(" JR_UGE PETLJA_3\n")
+
+    file.write("GOTOVO_3 ADD R0, 0, R6\n")
+    file.write(" RET\n")
 
     file.write("LABEL_0")
 

@@ -56,18 +56,10 @@ Comparing files OUTPUTS\18_init_izraz.out and TESTS\18_INIT_IZRAZ\TEST.OUT
 FC: no differences encountered
 
 Comparing files OUTPUTS\19_if1.out and TESTS\19_IF1\TEST.OUT
-***** OUTPUTS\19_if1.out
-123
-***** TESTS\19_IF1\TEST.OUT
-21
-*****
+FC: no differences encountered
 
 Comparing files OUTPUTS\20_if2.out and TESTS\20_IF2\TEST.OUT
-***** OUTPUTS\20_if2.out
-123
-***** TESTS\20_IF2\TEST.OUT
-11
-*****
+FC: no differences encountered
 
 Comparing files OUTPUTS\21_if3.out and TESTS\21_IF3\TEST.OUT
 FC: no differences encountered
