@@ -161,5 +161,5 @@ with open("a.frisc", "w") as file:
 
 check_functions(root_table, root_table)
 
-print(root_table.__str__(0))
+#print(root_table.__str__(0))
 
