@@ -255,6 +255,7 @@ def primarni_izraz(node, table):
             elif table.table.get(node.children[0].props["name"].split()[2]) and "niz" in table.table.get(node.children[0].props["name"].split()[2])["type"]:
                 file.write(f" ADD SP, 0{hex(address)[2:]}, R0\n")
                 file.write(f" PUSH R0\n")
+                table.table.update({"temp size": table.table.get("temp size") + 4})
             elif temp_table.parent:
                 file.write(f" MOVE %D {address}, R0\n")
                 file.write(f" ADD R0, SP, R0\n")

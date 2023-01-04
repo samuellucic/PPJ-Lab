@@ -86,10 +86,7 @@ Comparing files OUTPUTS\28_rek_main.out and TESTS\28_REK_MAIN\TEST.OUT
 FC: no differences encountered
 
 Comparing files OUTPUTS\29_for.out and TESTS\29_FOR\TEST.OUT
-***** OUTPUTS\29_for.out
-***** TESTS\29_FOR\TEST.OUT
-84
-*****
+FC: no differences encountered
 
 Comparing files OUTPUTS\30_while.out and TESTS\30_WHILE\TEST.OUT
 FC: no differences encountered
@@ -115,7 +112,6 @@ FC: no differences encountered
 
 Comparing files OUTPUTS\36_params2.out and TESTS\36_PARAMS2\TEST.OUT
 ***** OUTPUTS\36_params2.out
-0
 ***** TESTS\36_PARAMS2\TEST.OUT
 112
 *****
