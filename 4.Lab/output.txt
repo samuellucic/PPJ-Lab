@@ -78,63 +78,37 @@ FC: no differences encountered
 
 Comparing files OUTPUTS\26_niz4.out and TESTS\26_NIZ4\TEST.OUT
 ***** OUTPUTS\26_niz4.out
+0
 ***** TESTS\26_NIZ4\TEST.OUT
 123
 *****
 
 Comparing files OUTPUTS\27_rek.out and TESTS\27_REK\TEST.OUT
-***** OUTPUTS\27_rek.out
-***** TESTS\27_REK\TEST.OUT
-5
-*****
+FC: no differences encountered
 
 Comparing files OUTPUTS\28_rek_main.out and TESTS\28_REK_MAIN\TEST.OUT
-***** OUTPUTS\28_rek_main.out
-***** TESTS\28_REK_MAIN\TEST.OUT
-5
-*****
+FC: no differences encountered
 
 Comparing files OUTPUTS\29_for.out and TESTS\29_FOR\TEST.OUT
-***** OUTPUTS\29_for.out
-***** TESTS\29_FOR\TEST.OUT
-84
-*****
+FC: no differences encountered
 
 Comparing files OUTPUTS\30_while.out and TESTS\30_WHILE\TEST.OUT
-***** OUTPUTS\30_while.out
-***** TESTS\30_WHILE\TEST.OUT
-16
-*****
+FC: no differences encountered
 
 Comparing files OUTPUTS\31_inc.out and TESTS\31_INC\TEST.OUT
-***** OUTPUTS\31_inc.out
-***** TESTS\31_INC\TEST.OUT
-2
-*****
+FC: no differences encountered
 
 Comparing files OUTPUTS\32_gcd.out and TESTS\32_GCD\TEST.OUT
-***** OUTPUTS\32_gcd.out
-***** TESTS\32_GCD\TEST.OUT
-2
-*****
+FC: no differences encountered
 
 Comparing files OUTPUTS\33_short.out and TESTS\33_SHORT\TEST.OUT
-***** OUTPUTS\33_short.out
-***** TESTS\33_SHORT\TEST.OUT
-15
-*****
+FC: no differences encountered
 
 Comparing files OUTPUTS\34_izraz.out and TESTS\34_IZRAZ\TEST.OUT
-***** OUTPUTS\34_izraz.out
-***** TESTS\34_IZRAZ\TEST.OUT
-59
-*****
+FC: no differences encountered
 
 Comparing files OUTPUTS\35_params.out and TESTS\35_PARAMS\TEST.OUT
-***** OUTPUTS\35_params.out
-***** TESTS\35_PARAMS\TEST.OUT
-25
-*****
+FC: no differences encountered
 
 Comparing files OUTPUTS\36_params2.out and TESTS\36_PARAMS2\TEST.OUT
 ***** OUTPUTS\36_params2.out
@@ -143,8 +117,5 @@ Comparing files OUTPUTS\36_params2.out and TESTS\36_PARAMS2\TEST.OUT
 *****
 
 Comparing files OUTPUTS\37_funcloop.out and TESTS\37_FUNCLOOP\TEST.OUT
-***** OUTPUTS\37_funcloop.out
-***** TESTS\37_FUNCLOOP\TEST.OUT
-10
-*****
+FC: no differences encountered
 

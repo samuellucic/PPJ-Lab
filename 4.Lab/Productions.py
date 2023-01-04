@@ -8,6 +8,8 @@ for_label = 0
 while_label = 0
 end_for_label = 0
 end_while_label = 0
+and_label = 0
+or_label = 0
 
 def convert_int_to_twos(n: int) -> str:
     return '{0:08X}'.format(int(bin(n % (1<<32)), 2))
@@ -935,6 +937,7 @@ def bin_ili_izraz(node, table):
         table.table.update({"temp size": table.table.get("temp size") - 4})
 
 def log_i_izraz(node, table):
+    global and_label
     prod = node.get_production()
 
     if prod == "<log_i_izraz> ::= <bin_ili_izraz>":
@@ -948,6 +951,14 @@ def log_i_izraz(node, table):
     elif prod == "<log_i_izraz> ::= <log_i_izraz> OP_I <bin_ili_izraz>":
         #1
         log_i_izraz(node.children[0], table)
+
+        temp_label = and_label 
+        and_label += 1
+        file.write(" POP R0\n")
+        file.write(" MOVE 0, R1\n")
+        file.write(" SUB R0, R1, R0\n")
+        file.write(" PUSH R0\n")
+        file.write(f" JP_SLE AND_{temp_label}\n")
 
         #2
         node_type_0 = node.children[0].props["type"]
@@ -966,7 +977,10 @@ def log_i_izraz(node, table):
 
         node.props.update({"type": "int", "l_expr": False})    
 
+        file.write(f"AND_{temp_label}\n")
+
 def log_ili_izraz(node, table):
+    global or_label
     prod = node.get_production()  
 
     if prod == "<log_ili_izraz> ::= <log_i_izraz>":
@@ -980,6 +994,14 @@ def log_ili_izraz(node, table):
     elif prod == "<log_ili_izraz> ::= <log_ili_izraz> OP_ILI <log_i_izraz>":
         #1
         log_ili_izraz(node.children[0], table)
+
+        temp_label = or_label 
+        or_label += 1
+        file.write(" POP R0\n")
+        file.write(" MOVE 0, R1\n")
+        file.write(" SUB R0, R1, R0\n")
+        file.write(" PUSH R0\n")
+        file.write(f" JP_SGT OR_{temp_label}\n")
 
         #2
         node_type_0 = node.children[0].props["type"]
@@ -997,6 +1019,8 @@ def log_ili_izraz(node, table):
             sys.exit()
 
         node.props.update({"type": "int", "l_expr": False})  
+
+        file.write(f"OR_{temp_label}\n")
 
 def izraz_pridruzivanja(node, table):
     prod = node.get_production()
@@ -1502,8 +1526,8 @@ def init_deklarator(node, table):
         node.children[0].props.update({"i_type": node.props["i_type"]})
         izravni_deklarator(node.children[0], table)
 
-        file.write(" POP R0\n")
-        table.table.update({"temp size": table.table.get("temp size") - 4})
+        # file.write(" POP R0\n")
+        # table.table.update({"temp size": table.table.get("temp size") - 4})
         
         #2
         node_type_0 = node.children[0].props["type"]
