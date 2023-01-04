@@ -33,13 +33,8 @@ for line in tree_input[1:]:
     previous_node = node
     previous_space_count = space_count
 
-#print(root_node.__str__(0))
-#print(root_node.get_children())
-
 root_table = TableNode()
 prijevodna_jedinica(root_node, root_table)
-
-#conditions = [False, True]
 
 if (not root_table.table.get("main (func)") 
     or root_table.table["main (func)"]["return_type"] != "int"
@@ -116,51 +111,51 @@ with open("a.frisc", "w") as file:
     file.write("GOTOVO_1 ADD R2, 0, R6\n")
     file.write(" RET\n")
 
-    # #DIJELJENJE
-    # file.write("H_DIV LOAD R0, (SP+8) \n")
-    # file.write(" LOAD R1, (SP+4)\n")
-    # file.write(" MOVE -1, R2\n")
-    # file.write(" XOR R0, R1, R3\n")
+    #DIJELJENJE
+    file.write("H_DIV LOAD R0, (SP+8) \n")
+    file.write(" LOAD R1, (SP+4)\n")
+    file.write(" MOVE -1, R2\n")
+    file.write(" XOR R0, R1, R3\n")
 
-    # file.write("TEST_3 OR R0, R0, R0\n")
-    # file.write(" JR_P TEST_4\n")
+    file.write("TEST_3 OR R0, R0, R0\n")
+    file.write(" JR_P TEST_4\n")
 
-    # file.write("NEGAT_3 XOR R0, -1, R0\n")
-    # file.write(" ADD R0, 1, R0\n")
+    file.write("NEGAT_3 XOR R0, -1, R0\n")
+    file.write(" ADD R0, 1, R0\n")
 
-    # file.write("TEST_4 OR R1, R1, R1\n")
-    # file.write(" JR_P PETLJA_2\n")
+    file.write("TEST_4 OR R1, R1, R1\n")
+    file.write(" JR_P PETLJA_2\n")
 
-    # file.write("NEGAT_4 XOR R1, -1, R1\n")
-    # file.write(" ADD R1, 1, R1\n")
+    file.write("NEGAT_4 XOR R1, -1, R1\n")
+    file.write(" ADD R1, 1, R1\n")
     
-    # file.write("PETLJA_2 ADD R2, 1, R2\n")
-    # file.write(" SUB R0, R1, R0\n")
-    # file.write(" JR_UGE PETLJA_2\n")
+    file.write("PETLJA_2 ADD R2, 1, R2\n")
+    file.write(" SUB R0, R1, R0\n")
+    file.write(" JR_UGE PETLJA_2\n")
 
-    # file.write(" ROTL R3, 1, R3\n")
-    # file.write(" JR_NC GOTOVO_2\n")
+    file.write(" ROTL R3, 1, R3\n")
+    file.write(" JR_NC GOTOVO_2\n")
 
-    # file.write(" XOR R2, -1, R2\n")
-    # file.write(" ADD R2, 1, R2\n")
+    file.write(" XOR R2, -1, R2\n")
+    file.write(" ADD R2, 1, R2\n")
 
-    # file.write("GOTOVO_2 ADD R2, 0, R6\n")
-    # file.write(" RET\n")
+    file.write("GOTOVO_2 ADD R2, 0, R6\n")
+    file.write(" RET\n")
 
     # OSTATAK
-    # file.write("H_MOD LOAD R0, (SP+8) \n")
-    # file.write(" LOAD R1, (SP+4)\n")
-    # file.write(" MOVE -1, R2\n")
+    file.write("H_MOD LOAD R0, (SP+8) \n")
+    file.write(" LOAD R1, (SP+4)\n")
+    file.write(" MOVE -1, R2\n")
 
-    # file.write(" SUB R0, R1, R3\n")
-    # file.write(" JP_SLT GOTOVO_3\n")
+    file.write("PETLJA_3 SUB R0, R1, R3\n")
+    file.write(" JP_SLT GOTOVO_3\n")
 
-    # file.write("PETLJA_3 ADD R2, 1, R2\n")
-    # file.write(" SUB R0, R1, R0\n")
-    # file.write(" JR_UGE PETLJA_3\n")
+    file.write(" ADD R2, 1, R2\n")
+    file.write(" SUB R0, R1, R0\n")
+    file.write(" JR_UGE PETLJA_3\n")
 
-    # file.write("GOTOVO_3 ADD R0, 0, R6\n")
-    # file.write(" RET\n")
+    file.write("GOTOVO_3 ADD R0, 0, R6\n")
+    file.write(" RET\n")
 
     file.write("LABEL_0")
 

@@ -668,18 +668,11 @@ def multiplikativni_izraz(node, table):
         elif "OP_DIJELI" in prod:
             file.write(" CALL H_DIV\n")
         else:
-            file.write(" POP R1\n")
-            file.write(" POP R0\n")
-            file.write(" MOVE -1, R2\n")
-
-            file.write("PETLJA_3 SUB R0, R1, R3\n")
-            file.write(" JP_SLT GOTOVO_3\n")
-
-            file.write(" ADD R2, 1, R2\n")
-            file.write(" SUB R0, R1, R0\n")
-            file.write(" JR_UGE PETLJA_3\n")
-
-            file.write("GOTOVO_3 ADD R0, 0, R6\n")
+            file.write(" CALL H_MOD\n")
+        file.write(" ADD SP, 8, SP\n")
+        file.write(" PUSH R6\n")
+        file.write(" POP R1\n")
+        file.write(" ADD R0, R1, R0\n")
         file.write(" PUSH R6\n")
 
         table.table.update({"temp size": table.table.get("temp size") - 4})
@@ -1723,9 +1716,7 @@ def izravni_deklarator(node, table):
             if return_type != node_i_type or len(params) != 0:
                 print(node.get_error())
                 sys.exit()
-            # if node.parent.props["type"] != f"funkcija(void -> {node_i_type})":
-            #     print(node.get_error())
-            #     sys.exit()
+
         elif table.table.get(node_name_0_not_func):
             print(node.get_error())
             sys.exit()
@@ -1831,8 +1822,3 @@ def check_for_child_node(node, name):
                 break
 
     return exists
-
-#ako bude bilo potrebe
-# TODO
-def check_for_parent_node(node, parameter_name, parameter):
-    pass
