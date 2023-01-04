@@ -86,35 +86,35 @@ with open("a.frisc", "w") as file:
 
 
     #množenje
-    # file.write("H_MULT LOAD R0, (SP+8)\n")
-    # file.write(" LOAD R1, (SP+4)\n")
-    # file.write(" MOVE 0, R2\n")
-    # file.write(" XOR R0, R1, R3\n")
+    file.write("H_MULT LOAD R4, (SP+8)\n")
+    file.write(" LOAD R1, (SP+4)\n")
+    file.write(" MOVE 0, R2\n")
+    file.write(" XOR R0, R1, R3\n")
     
-    # file.write("TEST_1 OR R0, R0, R0\n")
-    # file.write(" JR_P TEST_2\n")
+    file.write("TEST_1 OR R4, R4, R4\n")
+    file.write(" JR_P TEST_2\n")
 
-    # file.write("NEGAT_1 XOR R0, -1, R0\n")
-    # file.write(" ADD R0, 1, R0\n")
+    file.write("NEGAT_1 XOR R4, -1, R4\n")
+    file.write(" ADD R4, 1, R4\n")
 
-    # file.write("TEST_2 OR R1, R1, R1\n")
-    # file.write(" JR_P PETLJA\n")
+    file.write("TEST_2 OR R1, R1, R1\n")
+    file.write(" JR_P PETLJA\n")
 
-    # file.write("NEGAT_2 XOR R1, -1, R1\n")
-    # file.write(" ADD R1, 1, R1\n")
+    file.write("NEGAT_2 XOR R1, -1, R1\n")
+    file.write(" ADD R1, 1, R1\n")
     
-    # file.write("PETLJA ADD R0, R2, R2\n")
-    # file.write(" SUB R1, 1, R1\n")
-    # file.write(" JR_NZ PETLJA\n")
+    file.write("PETLJA ADD R4, R2, R2\n")
+    file.write(" SUB R1, 1, R1\n")
+    file.write(" JR_NZ PETLJA\n")
 
-    # file.write(" ROTL R3, 1, R3\n")
-    # file.write(" JR_NC GOTOVO_1\n")
+    file.write(" ROTL R3, 1, R3\n")
+    file.write(" JR_NC GOTOVO_1\n")
 
-    # file.write(" XOR R2, -1, R2\n")
-    # file.write(" ADD R2, 1, R2\n")
+    file.write(" XOR R2, -1, R2\n")
+    file.write(" ADD R2, 1, R2\n")
 
-    # file.write("GOTOVO_1 ADD R2, 0, R6\n")
-    # file.write(" RET\n")
+    file.write("GOTOVO_1 ADD R2, 0, R6\n")
+    file.write(" RET\n")
 
     # #DIJELJENJE
     # file.write("H_DIV LOAD R0, (SP+8) \n")

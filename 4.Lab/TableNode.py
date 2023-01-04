@@ -5,10 +5,11 @@ class TableNode:
         self.children = None
         self.table = {"param size": 0, "local size": 0, "temp size": 0}
         #dict:
-        # "a":      type: string ili "niz(string)" -> u slucaju da je array ili "ref"
+        # "a":      type: string ili "niz(string)" -> u slucaju da je array
         #           nepotreban (racuna se putem tipa): l_expr: boolean
         #           location (vrijednost local ili param)
         #           location_num (npr 4)
+        #           ref (boolean)
         # "a (func)": defined: boolean -> imenovana kao npr. a func
         #             return_type: string
         #             params: list<string>

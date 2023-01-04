@@ -68,22 +68,13 @@ Comparing files OUTPUTS\22_if4.out and TESTS\22_IF4\TEST.OUT
 FC: no differences encountered
 
 Comparing files OUTPUTS\23_niz1.out and TESTS\23_NIZ1\TEST.OUT
-***** OUTPUTS\23_niz1.out
-***** TESTS\23_NIZ1\TEST.OUT
-98
-*****
+FC: no differences encountered
 
 Comparing files OUTPUTS\24_niz2.out and TESTS\24_NIZ2\TEST.OUT
-***** OUTPUTS\24_niz2.out
-***** TESTS\24_NIZ2\TEST.OUT
-12
-*****
+FC: no differences encountered
 
 Comparing files OUTPUTS\25_niz3.out and TESTS\25_NIZ3\TEST.OUT
-***** OUTPUTS\25_niz3.out
-***** TESTS\25_NIZ3\TEST.OUT
-124
-*****
+FC: no differences encountered
 
 Comparing files OUTPUTS\26_niz4.out and TESTS\26_NIZ4\TEST.OUT
 ***** OUTPUTS\26_niz4.out
