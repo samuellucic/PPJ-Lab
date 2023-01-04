@@ -229,7 +229,7 @@ def primarni_izraz(node, table):
                                 temp_table.table.get("local size") + (4 if temp_table.is_func else 0) +
                                 temp_table.table.get("param size"))
                 temp_table = temp_table.parent
-        print("OK", temp_table.table, address, child_name)
+        #print("OK", temp_table.table, address, child_name)
         
         if (is_in_function(node, "<unarni_izraz>")
                 and not len(node.parent.parent.children) > 1
@@ -239,8 +239,10 @@ def primarni_izraz(node, table):
                 file.write(f" PUSH R0\n")
                 table.table.update({"temp size": table.table.get("temp size") + 4})
             elif table.table.get(node.children[0].props["name"].split()[2]) and "niz" in table.table.get(node.children[0].props["name"].split()[2])["type"]:
-                pass
-                #file.write("SUPER MAN")
+                file.write(f" MOVE 0{hex(address)[2:]}, R0\n")
+                file.write(f" ADD R0, SP, R0\n")
+                file.write(" PUSH R0\n")
+                table.table.update({"temp size": table.table.get("temp size") + 4})
             elif temp_table.parent:
                 file.write(f" LOAD R0, (SP+0{hex(address)[2:]})\n")
                 file.write(" PUSH R0\n")
@@ -1123,11 +1125,23 @@ def slozena_naredba(node, table):
     if prod == "<slozena_naredba> ::= L_VIT_ZAGRADA <lista_naredbi> D_VIT_ZAGRADA":
         lista_naredbi(node.children[1], table)
 
+        address = 0
+        address += table.table.get("temp size") + table.table.get("local size")        
+            
+        file.write(f" MOVE %D {address}, R0\n")
+        file.write(f" ADD SP, R0, SP\n")
+
     elif prod == "<slozena_naredba> ::= L_VIT_ZAGRADA <lista_deklaracija> <lista_naredbi> D_VIT_ZAGRADA":
         lista_deklaracija(node.children[1], table)
 
         lista_naredbi(node.children[2], table)
 
+        address = 0
+        address += table.table.get("temp size") + table.table.get("local size")        
+            
+        file.write(f" MOVE %D {address}, R0\n")
+        file.write(f" ADD SP, R0, SP\n")            
+            
 def lista_naredbi(node, table):
     prod = node.get_production()
 
@@ -1544,7 +1558,11 @@ def init_deklarator(node, table):
     elif prod == "<init_deklarator> ::= <izravni_deklarator> OP_PRIDRUZI <inicijalizator>":
         #1
         if is_in_function(node, "<definicija_funkcije>"):
-            file.write(" SUB SP, 4, SP\n")
+            broj = 1
+            if len(node.children[0].children) > 3:
+                broj = int (node.children[0].children[2].props["name"].split()[2])
+
+            file.write(f" SUB SP, 0{hex(4 * broj)[2:]}, SP\n")
 
         node.children[0].props.update({"i_type": node.props["i_type"]})
         izravni_deklarator(node.children[0], table)
