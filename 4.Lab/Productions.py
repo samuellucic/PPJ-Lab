@@ -170,8 +170,8 @@ def definicija_funkcije(node, table):
             address += (temp_table.table.get("temp size") +
                             temp_table.table.get("local size") + (4 if temp_table.is_func else 0) +
                             temp_table.table.get("param size"))
-            temp_table = temp_table.parent            
-       
+            temp_table = temp_table.parent     
+
         file.write(f" MOVE %D {address}, R0\n")
         file.write(f" ADD SP, R0, SP\n")
         file.write(" RET\n")
@@ -227,7 +227,7 @@ def primarni_izraz(node, table):
                                 temp_table.table.get("local size") + (4 if temp_table.is_func else 0) +
                                 temp_table.table.get("param size"))
                 temp_table = temp_table.parent
-        #print("OK", temp_table.table, address, child_name)
+        print("OK", temp_table.table, address, child_name)
         
         if (is_in_function(node, "<unarni_izraz>")
                 and not len(node.parent.parent.children) > 1
@@ -235,25 +235,35 @@ def primarni_izraz(node, table):
             if temp_table.table.get(child_name).get("ref"):
                 file.write(f" LOAD R0, (SP+0{hex(address)[2:]})\n")
                 file.write(f" PUSH R0\n")
+                table.table.update({"temp size": table.table.get("temp size") + 4})
+            elif table.table.get(node.children[0].props["name"].split()[2]) and "niz" in table.table.get(node.children[0].props["name"].split()[2])["type"]:
+                pass
+                #file.write("SUPER MAN")
             elif temp_table.parent:
                 file.write(f" LOAD R0, (SP+0{hex(address)[2:]})\n")
                 file.write(" PUSH R0\n")
+                table.table.update({"temp size": table.table.get("temp size") + 4})
             else:
                 file.write(f" LOAD R0, (G_{child_name.upper()})\n")
                 file.write(" PUSH R0\n")
+                table.table.update({"temp size": table.table.get("temp size") + 4})
         else:
             if temp_table.table.get(child_name).get("ref"):
                 file.write(f" LOAD R0, (SP+0{hex(address)[2:]})\n")
+                file.write(f" PUSH R0\n")
+                table.table.update({"temp size": table.table.get("temp size") + 4})
+            elif table.table.get(node.children[0].props["name"].split()[2]) and "niz" in table.table.get(node.children[0].props["name"].split()[2])["type"]:
+                file.write(f" ADD SP, 0{hex(address)[2:]}, R0\n")
                 file.write(f" PUSH R0\n")
             elif temp_table.parent:
                 file.write(f" MOVE %D {address}, R0\n")
                 file.write(f" ADD R0, SP, R0\n")
                 file.write(" PUSH R0\n")
+                table.table.update({"temp size": table.table.get("temp size") + 4})
             else:
                 file.write(f" MOVE G_{child_name.upper()}, R0\n")
                 file.write(" PUSH R0\n")
-
-        table.table.update({"temp size": table.table.get("temp size") + 4})
+                table.table.update({"temp size": table.table.get("temp size") + 4})
             
     elif prod == "<primarni_izraz> ::= BROJ":
         node.props.update({"type": "int", "l_expr": False})
@@ -354,7 +364,6 @@ def postfiks_izraz(node, table):
         file.write(" ADD SP, 8, SP\n")
         file.write(" PUSH R6\n")
         file.write(" POP R1\n")
-
         file.write(" ADD R0, R1, R0\n")
 
         if is_in_function(node, "<unarni_izraz>"):
@@ -390,7 +399,7 @@ def postfiks_izraz(node, table):
 
         #2
         lista_argumenata(node.children[2], table)
-
+        
         #3
         node_type_0 = node.children[0].props["type"]
         if "funkcija([" not in node_type_0.split(" -> ")[0]:
@@ -1501,9 +1510,6 @@ def init_deklarator(node, table):
 
         node.children[0].props.update({"i_type": node.props["i_type"]})
         izravni_deklarator(node.children[0], table)
-
-        file.write(" POP R0\n")
-        table.table.update({"temp size": table.table.get("temp size") - 4})
         
         #2
         node_type_0 = node.children[0].props["type"]
@@ -1552,16 +1558,6 @@ def init_deklarator(node, table):
             print(node.get_error())
             sys.exit()
 
-        # if not table.parent:
-        #     temp_node = node.children[2]
-        #     while temp_node.children:
-        #         if temp_node.props["name"] == "<unarni_izraz>":
-        #             temp_node = temp_node.children[1]
-        #         else:
-        #             temp_node = temp_node.children[0]
-        #     value = int(temp_node.props['name'].split()[2])
-        #     file.write(f"G_{node.children[0].children[0].props['name'].split()[2].upper()} DW %D {value}\n")
-        # else:
         if len(node.children[0].children) > 1 and node.children[0].children[1].props["name"].split()[0] == "L_UGL_ZAGRADA":
             broj = int(node.children[0].children[2].props["name"].split()[2])
             file.write(f" LOAD R0, (SP+0{hex(4 * broj)[2:]})\n")
@@ -1647,14 +1643,14 @@ def izravni_deklarator(node, table):
             node_name_0: {
                 "type": f"niz({node_i_type})",
                 "location": "local",
-                "location_num": table.table["local size"] - 4 * int(node.children[2].props["name"].split()[2])
+                "location_num": table.table["local size"]# - 4 * int(node.children[2].props["name"].split()[2])
             }
         })
         node.props["type"] = f"niz({node_i_type})"
         node.props["elem_num"] = node_value_2
 
         address = table.table["local size"] - table.table[node_name_0]["location_num"] + table.table["temp size"]
-        print(address)
+        #print(address, table.table)
         if not is_in_function(node, "<definicija_funkcije>"):
             file.write(f" JP LABEL_{label}\n")
             file.write(f"G_{node_name_0.upper()} DW 000000000")
