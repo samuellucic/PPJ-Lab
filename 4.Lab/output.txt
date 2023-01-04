@@ -32,77 +32,48 @@ Comparing files OUTPUTS\11_fun1.out and TESTS\11_FUN1\TEST.OUT
 FC: no differences encountered
 
 Comparing files OUTPUTS\12_fun2.out and TESTS\12_FUN2\TEST.OUT
-***** OUTPUTS\12_fun2.out
-7
-***** TESTS\12_FUN2\TEST.OUT
-12
-*****
+FC: no differences encountered
 
 Comparing files OUTPUTS\13_fun3.out and TESTS\13_FUN3\TEST.OUT
-***** OUTPUTS\13_fun3.out
-3
-***** TESTS\13_FUN3\TEST.OUT
-13
-*****
+FC: no differences encountered
 
 Comparing files OUTPUTS\13_scope1.out and TESTS\13_SCOPE1\TEST.OUT
 FC: no differences encountered
 
 Comparing files OUTPUTS\14_scope2.out and TESTS\14_SCOPE2\TEST.OUT
-***** OUTPUTS\14_scope2.out
-14883
-***** TESTS\14_SCOPE2\TEST.OUT
-123
-*****
+FC: no differences encountered
 
 Comparing files OUTPUTS\15_scope3.out and TESTS\15_SCOPE3\TEST.OUT
-***** OUTPUTS\15_scope3.out
-0
-***** TESTS\15_SCOPE3\TEST.OUT
-32
-*****
+FC: no differences encountered
 
 Comparing files OUTPUTS\16_scope4.out and TESTS\16_SCOPE4\TEST.OUT
-***** OUTPUTS\16_scope4.out
-***** TESTS\16_SCOPE4\TEST.OUT
-28
-*****
+FC: no differences encountered
 
 Comparing files OUTPUTS\17_char.out and TESTS\17_CHAR\TEST.OUT
-***** OUTPUTS\17_char.out
-***** TESTS\17_CHAR\TEST.OUT
-99
-*****
+FC: no differences encountered
 
 Comparing files OUTPUTS\18_init_izraz.out and TESTS\18_INIT_IZRAZ\TEST.OUT
-***** OUTPUTS\18_init_izraz.out
-***** TESTS\18_INIT_IZRAZ\TEST.OUT
-4
-*****
+FC: no differences encountered
 
 Comparing files OUTPUTS\19_if1.out and TESTS\19_IF1\TEST.OUT
 ***** OUTPUTS\19_if1.out
+123
 ***** TESTS\19_IF1\TEST.OUT
 21
 *****
 
 Comparing files OUTPUTS\20_if2.out and TESTS\20_IF2\TEST.OUT
 ***** OUTPUTS\20_if2.out
+123
 ***** TESTS\20_IF2\TEST.OUT
 11
 *****
 
 Comparing files OUTPUTS\21_if3.out and TESTS\21_IF3\TEST.OUT
-***** OUTPUTS\21_if3.out
-***** TESTS\21_IF3\TEST.OUT
-12
-*****
+FC: no differences encountered
 
 Comparing files OUTPUTS\22_if4.out and TESTS\22_IF4\TEST.OUT
-***** OUTPUTS\22_if4.out
-***** TESTS\22_IF4\TEST.OUT
-32
-*****
+FC: no differences encountered
 
 Comparing files OUTPUTS\23_niz1.out and TESTS\23_NIZ1\TEST.OUT
 ***** OUTPUTS\23_niz1.out

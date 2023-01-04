@@ -86,6 +86,7 @@ def definicija_funkcije(node, table):
 
         #6
         child_table = TableNode()
+        child_table.is_func = True
         table.add_child(child_table)
         slozena_naredba(node.children[5], child_table)
 
@@ -136,6 +137,7 @@ def definicija_funkcije(node, table):
 
         #7
         child_table = TableNode()
+        child_table.is_func = True
         table.add_child(child_table)
     
         for name, type in zip(node_names_3, node_type_list_3):
@@ -193,21 +195,31 @@ def primarni_izraz(node, table):
                                 (temp_table.table.get("local size") - temp_table.table.get(child_name).get("location_num"))) 
                 else:
                     address += (temp_table.table.get("temp size") +
-                                temp_table.table.get("local size") + 4 +
+                                temp_table.table.get("local size") + (4 if temp_table.is_func else 0) +
                                 (temp_table.table.get("param size") - temp_table.table.get(child_name).get("location_num"))) 
                 break
             else:
                 address += (temp_table.table.get("temp size") +
-                                temp_table.table.get("local size") + 4 +
+                                temp_table.table.get("local size") + (4 if temp_table.is_func else 0) +
                                 temp_table.table.get("param size"))
                 temp_table = temp_table.parent
+            #print(temp_table.table, address, child_name)
 
         if is_in_function(node, "<unarni_izraz>"):
-            file.write(f" LOAD R0, (SP+{address})\n")
-            file.write(" PUSH R0\n")
+            if temp_table.parent:
+                file.write(f" LOAD R0, (SP+0{hex(address)[2:]})\n")
+                file.write(" PUSH R0\n")
+            else:
+                file.write(f" LOAD R0, (G_{child_name.upper()})\n")
+                file.write(" PUSH R0\n")
         else:
-            file.write(f" MOVE %D {address}, R0\n")
-            file.write(" PUSH R0\n")
+            if temp_table.parent:
+                file.write(f" MOVE %D {address}, R0\n")
+                file.write(f" ADD R0, SP, R0\n")
+                file.write(" PUSH R0\n")
+            else:
+                file.write(f" MOVE G_{child_name.upper()}, R0\n")
+                file.write(" PUSH R0\n")
 
         table.table.update({"temp size": table.table.get("temp size") + 4})
             
@@ -316,6 +328,7 @@ def postfiks_izraz(node, table):
         name = node.children[0].children[0].children[0].props["name"].split()[2].upper()
         file.write(f" CALL F_{name}\n")
         file.write(f" PUSH R6\n")
+        table.table.update({"temp size": table.table.get("temp size") + 4})
 
     elif prod == "<postfiks_izraz> ::= <postfiks_izraz> L_ZAGRADA <lista_argumenata> D_ZAGRADA":
         #1
@@ -368,6 +381,20 @@ def postfiks_izraz(node, table):
 
         return_type = node_type_0.split(" -> ")[1][:-1]
         node.props.update({"type": return_type, "l_expr": False})
+
+        br_param = 1
+        child_node = node.children[2]
+
+        while child_node.children and child_node.children[0].props["name"] == "<lista_argumenata>":
+            br_param += 1
+            child_node = child_node.children[0]
+
+        table.table.update({"temp size": table.table.get("temp size") - 4 * br_param})
+        name = node.children[0].children[0].children[0].props["name"].split()[2].upper()
+        file.write(f" CALL F_{name}\n")
+        file.write(f" ADD SP, {4 * br_param}, SP\n")
+        file.write(f" PUSH R6\n")
+        table.table.update({"temp size": table.table.get("temp size") + 4})
 
     elif prod == "<postfiks_izraz> ::= <postfiks_izraz> OP_INC" or prod == "<postfiks_izraz> ::= <postfiks_izraz> OP_DEC":
         #1
@@ -904,6 +931,11 @@ def izraz_pridruzivanja(node, table):
 
         node.props.update({"type": node_type_0, "l_expr": False}) 
 
+        file.write(" POP R1\n")
+        file.write(" POP R0\n")
+        file.write(" STORE R1, (R0)\n")
+        table.table.update({"temp size": table.table.get("temp size") - 8})
+
 def izraz(node, table):
     prod = node.get_production()
 
@@ -1089,9 +1121,20 @@ def naredba_skoka(node, table):
             print(node.get_error())
             sys.exit()
 
-        #TODO CLEAR STACK FOR ALL SCOPES OF FUNCTION
-        file.write(f" ADD SP, {table.table.get('local size')}, SP")
-        file.write(" RET")
+        temp_table = table
+        address = 0
+        while temp_table:
+            if temp_table.is_func:
+                address += temp_table.table.get("temp size") + temp_table.table.get("local size")
+                break
+            address += (temp_table.table.get("temp size") +
+                            temp_table.table.get("local size") + (4 if temp_table.is_func else 0) +
+                            temp_table.table.get("param size"))
+            temp_table = temp_table.parent            
+            
+        file.write(f" MOVE %D {address}, R0\n")
+        file.write(f" ADD SP, R0, SP\n")
+        file.write(" RET\n")
 
     elif prod == "<naredba_skoka> ::= KR_RETURN <izraz> TOCKAZAREZ":
         #1
@@ -1145,7 +1188,21 @@ def naredba_skoka(node, table):
             sys.exit()
 
         file.write(" POP R6\n")
-        file.write(f" ADD SP, {table.table.get('local size')}, SP\n")
+        table.table.update({"temp size": table.table.get("temp size") - 4})
+        
+        temp_table = table
+        address = 0
+        while temp_table:
+            if temp_table.is_func:
+                address += temp_table.table.get("temp size") + temp_table.table.get("local size")
+                break
+            address += (temp_table.table.get("temp size") +
+                            temp_table.table.get("local size") + (4 if temp_table.is_func else 0) +
+                            temp_table.table.get("param size"))
+            temp_table = temp_table.parent            
+            
+        file.write(f" MOVE %D {address}, R0\n")
+        file.write(f" ADD SP, R0, SP\n")
         file.write(" RET\n")
 
 def lista_parametara(node, table):
@@ -1243,7 +1300,8 @@ def init_deklarator(node, table):
             sys.exit()
     elif prod == "<init_deklarator> ::= <izravni_deklarator> OP_PRIDRUZI <inicijalizator>":
         #1
-        file.write(" SUB SP, 4, SP\n")
+        if is_in_function(node, "<definicija_funkcije>"):
+            file.write(" SUB SP, 4, SP\n")
         node.children[0].props.update({"i_type": node.props["i_type"]})
         izravni_deklarator(node.children[0], table)
 
@@ -1293,12 +1351,13 @@ def init_deklarator(node, table):
         # else:
         file.write(" POP R1\n")
         file.write(" POP R0\n")
-        file.write(" ADD SP, R0, R2\n")
-        file.write(" STORE R1, (R2)\n")
+        file.write(" STORE R1, (R0)\n")
         table.table.update({"temp size": table.table.get("temp size") - 8})
 
 def izravni_deklarator(node, table):
     prod = node.get_production()
+
+    global label
 
     if prod == "<izravni_deklarator> ::= IDN":
         #1
@@ -1322,10 +1381,19 @@ def izravni_deklarator(node, table):
                 "location_num": table.table["local size"]
             }
         })
-        adress = table.table["local size"] - table.table[node_name_0]["location_num"]
-        file.write(f" MOVE {adress}, R0\n")
-        file.write(f" PUSH R0\n")
+        adress = table.table["local size"] - table.table[node_name_0]["location_num"] + table.table["temp size"]
         
+        if not is_in_function(node, "<definicija_funkcije>"):
+            file.write(f" JP LABEL_{label}\n")
+            file.write(f"G_{node_name_0.upper()} DW 000000000\n")
+            file.write(f"LABEL_{label}")
+            label += 1
+            file.write(f" MOVE G_{node_name_0.upper()}, R0\n")
+        else:
+            file.write(f" MOVE {adress}, R0\n")
+            file.write(f" ADD R0, SP, R0\n")
+
+        file.write(f" PUSH R0\n")
         table.table.update({"temp size": table.table.get("temp size") + 4})
 
         node.props["type"] = node_i_type

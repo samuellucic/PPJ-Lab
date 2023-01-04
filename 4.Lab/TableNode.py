@@ -16,7 +16,7 @@ class TableNode:
         # param size
         # local size
         # temp size
-        # 
+        self.is_func = False
 
     def add_child(self, child):
         if not self.children:
